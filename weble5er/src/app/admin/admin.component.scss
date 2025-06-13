@@ -1,3 +1,107 @@
+/* Admin Container Styles */
+.admin-container {
+  width: 100%;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* Navigation Styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+
+  .profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #007bff;
+  }
+
+  span {
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+
+      &:hover {
+        background: #f0f0f0;
+        color: #007bff;
+      }
+
+      &.active {
+        background: #007bff;
+        color: white;
+      }
+    }
+
+    &.notifications-menu-item {
+      display: flex;
+      align-items: center;
+
+      ::ng-deep .notifications-container {
+        .notification-icon {
+          padding: 0.5rem;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background: #f0f0f0;
+          }
+        }
+      }
+    }
+
+    .logout-link {
+      color: #dc3545 !important;
+
+      &:hover {
+        background: #f8d7da !important;
+        color: #721c24 !important;
+      }
+    }
+  }
+}
+
+/* Main Content Area */
+.main-content {
+  padding: 0;
+  background: #f8f9fa;
+  min-height: calc(100vh - 80px);
+}
+
+/* Legacy styles for backward compatibility */
 .admin-dashboard {
   padding: 20px;
   max-width: 1200px;

@@ -1,0 +1,26 @@
+<!-- Chef Container -->
+<div class="chef-container">
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="user-profile">
+      <img src="assets/default-profile.svg" alt="Profile" class="profile-img">
+      <span>Chef {{currentUser?.firstname || 'Chef'}}</span>
+    </div>
+
+    <ul class="nav-links">
+      <li><a routerLink="/chef/dashboard" routerLinkActive="active">Tableau de bord</a></li>
+      <li><a routerLink="/chef/demandes" routerLinkActive="active">Demandes</a></li>
+      <li><a routerLink="/chef/profile" routerLinkActive="active">Profil</a></li>
+      <li><a routerLink="/chef/administration" routerLinkActive="active">Administration</a></li>
+      <li class="notifications-menu-item">
+        <app-notifications></app-notifications>
+      </li>
+      <li><a (click)="logout()" class="logout-link">Déconnexion</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

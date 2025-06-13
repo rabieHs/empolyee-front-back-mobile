@@ -1,0 +1,103 @@
+<!-- Chef Administration Calendar View (Congé & Formation only) -->
+<div class="calendar-container">
+  <div class="calendar-header">
+    <h1>Administration - Calendrier des demandes</h1>
+    <p class="subtitle">Congés et formations uniquement</p>
+    <div class="calendar-navigation">
+      <button class="btn btn-outline-primary" (click)="changeMonth(-1)">
+        <i class="fas fa-chevron-left"></i> Mois précédent
+      </button>
+      <h2 class="calendar-title">{{ getCurrentMonthName() }}</h2>
+      <button class="btn btn-outline-primary" (click)="changeMonth(1)">
+        Mois suivant <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="calendar-grid">
+    <!-- En-têtes des jours de la semaine -->
+    <div class="weekday-header" *ngFor="let day of weekDays">
+      {{ day }}
+    </div>
+
+    <!-- Jours du mois -->
+    <div *ngFor="let day of calendarDays"
+         [ngClass]="{'calendar-day': true, 'empty-day': day === 0}">
+      <!-- Numéro du jour -->
+      <div class="day-number" *ngIf="day !== 0">{{ day }}</div>
+
+      <!-- Liste des demandes pour ce jour -->
+      <div class="day-requests" *ngIf="day !== 0 && getRequestsForDay(day).length > 0">
+        <div *ngFor="let request of getRequestsForDay(day)"
+             [ngClass]="getStatusClass(request.status || '')"
+             class="request-item"
+             (click)="viewRequestDetails(request)">
+          <span class="request-type">{{ request.type }}</span>
+          <span class="request-user">
+            {{ request.user?.firstname || request.firstname }} {{ request.user?.lastname || request.lastname }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour afficher les détails d'une demande -->
+<div class="request-details-modal" *ngIf="showRequestDetails" (click)="closeRequestDetails()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Détails de la demande</h3>
+      <button class="close-btn" (click)="closeRequestDetails()">&times;</button>
+    </div>
+    <div class="modal-body" *ngIf="selectedRequest">
+      <div class="detail-row">
+        <span class="detail-label">Type:</span>
+        <span class="detail-value">{{ selectedRequest.type }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Employé:</span>
+        <span class="detail-value">{{ selectedRequest.user?.firstname || selectedRequest.firstname }} {{ selectedRequest.user?.lastname || selectedRequest.lastname }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Date:</span>
+        <span class="detail-value">{{ formatDate(selectedRequest.date) }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Statut:</span>
+        <span class="detail-value" [ngClass]="getStatusClass(selectedRequest.status || '')">{{ selectedRequest.status }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Description:</span>
+        <span class="detail-value">{{ selectedRequest.description }}</span>
+      </div>
+
+      <!-- Actions du chef pour les demandes en attente -->
+      <div class="chef-actions" *ngIf="isRequestPending(selectedRequest)">
+        <h4>Actions du chef</h4>
+        <div class="action-buttons">
+          <button class="btn btn-success" (click)="approveRequest(selectedRequest)">
+            <i class="fas fa-check"></i> Approuver
+          </button>
+          <button class="btn btn-danger" (click)="rejectRequest(selectedRequest)">
+            <i class="fas fa-times"></i> Rejeter
+          </button>
+        </div>
+
+        <!-- Zone de commentaire optionnel -->
+        <div class="comment-section">
+          <label for="chefComment">Commentaire (optionnel):</label>
+          <textarea
+            id="chefComment"
+            class="form-control"
+            rows="3"
+            [(ngModel)]="chefResponse"
+            placeholder="Ajoutez un commentaire sur cette demande...">
+          </textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeRequestDetails()">Fermer</button>
+    </div>
+  </div>
+</div>

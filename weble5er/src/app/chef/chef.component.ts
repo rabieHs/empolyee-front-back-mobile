@@ -6,13 +6,13 @@ import { NotificationsComponent } from '../shared/notifications/notifications.co
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-admin',
-  templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss'],
+  selector: 'app-chef',
   standalone: true,
-  imports: [CommonModule, RouterModule, NotificationsComponent]
+  imports: [CommonModule, RouterModule, NotificationsComponent],
+  templateUrl: './chef.component.html',
+  styleUrls: ['./chef.component.scss']
 })
-export class AdminComponent implements OnInit, OnDestroy {
+export class ChefComponent implements OnInit, OnDestroy {
   currentUser: any = null;
   private subscriptions = new Subscription();
 

@@ -1,0 +1,174 @@
+<!-- Chef Profile Component -->
+<div class="profile-container">
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="profile-info">
+      <div class="profile-avatar">
+        <img src="assets/default-profile.svg" alt="Profile" class="avatar-img">
+      </div>
+      <div class="profile-details">
+        <h1>{{currentUser?.firstname}} {{currentUser?.lastname}}</h1>
+        <p class="role-badge chef-role">Chef d'équipe</p>
+        <p class="email">{{currentUser?.email}}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Content -->
+  <div class="profile-content">
+    <!-- Chef Information Section -->
+    <div class="section">
+      <h2>Informations personnelles</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Prénom:</label>
+          <span>{{currentUser?.firstname || 'Non renseigné'}}</span>
+        </div>
+        <div class="info-item">
+          <label>Nom:</label>
+          <span>{{currentUser?.lastname || 'Non renseigné'}}</span>
+        </div>
+        <div class="info-item">
+          <label>Email:</label>
+          <span>{{currentUser?.email || 'Non renseigné'}}</span>
+        </div>
+        <div class="info-item">
+          <label>Rôle:</label>
+          <span class="role-badge chef-role">Chef d'équipe</span>
+        </div>
+        <div class="info-item">
+          <label>Date d'inscription:</label>
+          <span>{{(currentUser?.createdAt | date:'dd/MM/yyyy') || 'Non renseigné'}}</span>
+        </div>
+        <div class="info-item">
+          <label>Statut:</label>
+          <span class="status-active">Actif</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users List Section (Read-only) -->
+    <div class="section">
+      <div class="section-header">
+        <h2>Liste des utilisateurs</h2>
+        <p class="section-subtitle">Consultation uniquement - Aucune modification autorisée</p>
+      </div>
+
+      <!-- Search and Filter -->
+      <div class="users-filters">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Rechercher un utilisateur..." [(ngModel)]="searchTerm" (input)="filterUsers()">
+        </div>
+        <div class="filter-buttons">
+          <button class="filter-btn" [class.active]="currentFilter === 'all'" (click)="filterByRole('all')">
+            <i class="fas fa-users"></i> Tous
+          </button>
+          <button class="filter-btn" [class.active]="currentFilter === 'user'" (click)="filterByRole('user')">
+            <i class="fas fa-user"></i> Utilisateurs
+          </button>
+          <button class="filter-btn" [class.active]="currentFilter === 'chef'" (click)="filterByRole('chef')">
+            <i class="fas fa-user-tie"></i> Chefs
+          </button>
+          <button class="filter-btn" [class.active]="currentFilter === 'admin'" (click)="filterByRole('admin')">
+            <i class="fas fa-user-shield"></i> Admins
+          </button>
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <div class="users-table-container" *ngIf="filteredUsers.length > 0">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Email</th>
+              <th>Rôle</th>
+              <th>Date d'inscription</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of filteredUsers" class="user-row">
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <div class="user-info">
+                    <span class="user-name">{{user.firstname}} {{user.lastname}}</span>
+                    <span class="user-id">ID: {{user.id}}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="user-email">{{user.email}}</span>
+              </td>
+              <td>
+                <span class="role-badge" [ngClass]="getRoleClass(user.role)">
+                  <i class="fas" [ngClass]="getRoleIcon(user.role)"></i>
+                  {{getRoleLabel(user.role)}}
+                </span>
+              </td>
+              <td>
+                <span class="date-text">{{user.createdAt | date:'dd/MM/yyyy'}}</span>
+              </td>
+              <td>
+                <span class="status-badge status-active">
+                  <i class="fas fa-check-circle"></i>
+                  Actif
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="filteredUsers.length === 0">
+        <div class="empty-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3>Aucun utilisateur trouvé</h3>
+        <p>Il n'y a aucun utilisateur correspondant à vos critères de recherche.</p>
+        <button class="clear-filters-btn" (click)="clearFilters()" *ngIf="searchTerm || currentFilter !== 'all'">
+          <i class="fas fa-refresh"></i> Effacer les filtres
+        </button>
+      </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="section">
+      <h2>Statistiques</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon users">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{getTotalUsers()}}</div>
+            <div class="stat-label">Total utilisateurs</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon requests">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{getTotalRequests()}}</div>
+            <div class="stat-label">Demandes traitées</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon pending">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{getPendingRequests()}}</div>
+            <div class="stat-label">En attente</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,211 @@
+<!-- Chef Demandes List View (Congé & Formation only) -->
+<div class="demandes-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Gestion des demandes</h1>
+      <p class="subtitle">Congés et formations uniquement</p>
+    </div>
+    <div class="header-stats">
+      <div class="stat-item">
+        <span class="stat-number">{{filteredRequests.length}}</span>
+        <span class="stat-label">Demandes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label>Type:</label>
+      <div class="filter-buttons">
+        <button class="filter-btn" [class.active]="currentTypeFilter === 'all'" (click)="filterByType('all')">
+          <i class="fas fa-list"></i> Toutes
+        </button>
+        <button class="filter-btn" [class.active]="currentTypeFilter === 'conge'" (click)="filterByType('conge')">
+          <i class="fas fa-calendar-alt"></i> Congés
+        </button>
+        <button class="filter-btn" [class.active]="currentTypeFilter === 'formation'" (click)="filterByType('formation')">
+          <i class="fas fa-graduation-cap"></i> Formations
+        </button>
+      </div>
+    </div>
+    
+    <div class="filter-group">
+      <label>Statut:</label>
+      <div class="filter-buttons">
+        <button class="filter-btn" [class.active]="currentFilter === 'all'" (click)="filterRequests('all')">
+          <i class="fas fa-list"></i> Toutes
+        </button>
+        <button class="filter-btn" [class.active]="currentFilter === 'pending'" (click)="filterRequests('pending')">
+          <i class="fas fa-clock"></i> En attente
+        </button>
+        <button class="filter-btn" [class.active]="currentFilter === 'approved'" (click)="filterRequests('approved')">
+          <i class="fas fa-check-circle"></i> Approuvées
+        </button>
+        <button class="filter-btn" [class.active]="currentFilter === 'rejected'" (click)="filterRequests('rejected')">
+          <i class="fas fa-times-circle"></i> Rejetées
+        </button>
+      </div>
+    </div>
+    
+    <div class="filter-group">
+      <label>Période:</label>
+      <div class="date-filters">
+        <input type="date" class="date-input" [(ngModel)]="startDate" (change)="filterByDateRange()" placeholder="Date de début">
+        <span class="date-separator">-</span>
+        <input type="date" class="date-input" [(ngModel)]="endDate" (change)="filterByDateRange()" placeholder="Date de fin">
+        <button class="clear-dates-btn" (click)="clearDateFilter()" *ngIf="startDate || endDate">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div class="filter-group">
+      <label>Recherche:</label>
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Rechercher par nom..." [(ngModel)]="searchTerm" (input)="filterRequests(currentFilter)">
+      </div>
+    </div>
+  </div>
+
+  <!-- Requests Table -->
+  <div class="table-container">
+    <div class="table-wrapper" *ngIf="filteredRequests.length > 0">
+      <table class="requests-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Employé</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let request of filteredRequests; trackBy: trackByRequestId" class="request-row">
+            <td>
+              <span class="request-id">#{{request.id}}</span>
+            </td>
+            <td>
+              <div class="date-cell">
+                <span class="date-main">{{request.createdAt | date:'dd/MM/yyyy'}}</span>
+                <span class="date-time">{{request.createdAt | date:'HH:mm'}}</span>
+              </div>
+            </td>
+            <td>
+              <div class="type-cell">
+                <i class="fas" [ngClass]="getTypeIcon(request.type)"></i>
+                <span>{{request.type}}</span>
+              </div>
+            </td>
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar">
+                  <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                  <span class="user-name">{{request.user?.firstname || request.firstname}} {{request.user?.lastname || request.lastname}}</span>
+                  <span class="user-role">Employé</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(request.status || '')">
+                <i class="fas" [ngClass]="getStatusIcon(request.status || '')"></i>
+                {{request.status}}
+              </span>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button class="action-btn view-btn" (click)="viewRequestDetails(request)" title="Voir les détails">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn approve-btn" *ngIf="canApprove(request)" (click)="approveRequest(request)" title="Approuver">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button class="action-btn reject-btn" *ngIf="canReject(request)" (click)="rejectRequest(request)" title="Rejeter">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredRequests.length === 0">
+      <div class="empty-icon">
+        <i class="fas fa-inbox"></i>
+      </div>
+      <h3>Aucune demande trouvée</h3>
+      <p>Il n'y a aucune demande de congé ou formation correspondant à vos critères de recherche.</p>
+      <button class="clear-filters-btn" (click)="clearAllFilters()" *ngIf="currentFilter !== 'all' || currentTypeFilter !== 'all' || searchTerm || startDate || endDate">
+        <i class="fas fa-refresh"></i> Effacer les filtres
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour afficher les détails d'une demande -->
+<div class="request-details-modal" *ngIf="showRequestDetails" (click)="closeRequestDetails()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Détails de la demande</h3>
+      <button class="close-btn" (click)="closeRequestDetails()">&times;</button>
+    </div>
+    <div class="modal-body" *ngIf="selectedRequest">
+      <div class="detail-row">
+        <span class="detail-label">Type:</span>
+        <span class="detail-value">{{ selectedRequest.type }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Employé:</span>
+        <span class="detail-value">{{ selectedRequest.user?.firstname || selectedRequest.firstname }} {{ selectedRequest.user?.lastname || selectedRequest.lastname }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Date:</span>
+        <span class="detail-value">{{ formatDate(selectedRequest.date) }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Statut:</span>
+        <span class="detail-value" [ngClass]="getStatusClass(selectedRequest.status || '')">{{ selectedRequest.status }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Description:</span>
+        <span class="detail-value">{{ selectedRequest.description }}</span>
+      </div>
+
+      <!-- Actions du chef pour les demandes en attente -->
+      <div class="chef-actions" *ngIf="isRequestPending(selectedRequest)">
+        <h4>Actions du chef</h4>
+        <div class="action-buttons">
+          <button class="btn btn-success" (click)="approveRequest(selectedRequest)">
+            <i class="fas fa-check"></i> Approuver
+          </button>
+          <button class="btn btn-danger" (click)="rejectRequest(selectedRequest)">
+            <i class="fas fa-times"></i> Rejeter
+          </button>
+        </div>
+
+        <!-- Zone de commentaire optionnel -->
+        <div class="comment-section">
+          <label for="chefComment">Commentaire (optionnel):</label>
+          <textarea
+            id="chefComment"
+            class="form-control"
+            rows="3"
+            [(ngModel)]="chefResponse"
+            placeholder="Ajoutez un commentaire sur cette demande...">
+          </textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeRequestDetails()">Fermer</button>
+    </div>
+  </div>
+</div>

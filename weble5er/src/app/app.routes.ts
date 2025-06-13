@@ -44,10 +44,33 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password/:token', component: ResetPasswordComponent },
-  { path: 'admin', component: AdminDashboardComponent, canActivate: [AuthGuard] },
+  {
+    path: 'admin',
+    component: AdminComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: AdminDashboardComponent },
+      { path: 'demandes', loadComponent: () => import('./admin/admin-demandes/admin-demandes.component').then(m => m.AdminDemandesComponent) },
+      { path: 'profile', component: AdminProfileComponent },
+      { path: 'administration', loadComponent: () => import('./admin/admin-administration/admin-administration.component').then(m => m.AdminAdministrationComponent) }
+    ]
+  },
   { path: 'admin/calendar', component: AdminCalendarComponent, canActivate: [AuthGuard] },
-  { path: 'admin/profile', component: AdminProfileComponent, canActivate: [AuthGuard] },
-  { path: 'chef', component: ChefCalendarComponent, canActivate: [AuthGuard] },
+  {
+    path: 'chef',
+    loadComponent: () => import('./chef/chef.component').then(m => m.ChefComponent),
+    canActivate: [AuthGuard],
+    data: { roles: ['chef'] },
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', loadComponent: () => import('./chef/chef-dashboard-new/chef-dashboard-new.component').then(m => m.ChefDashboardNewComponent) },
+      { path: 'demandes', loadComponent: () => import('./chef/chef-demandes/chef-demandes.component').then(m => m.ChefDemandesComponent) },
+      { path: 'profile', loadComponent: () => import('./chef/chef-profile/chef-profile.component').then(m => m.ChefProfileComponent) },
+      { path: 'administration', loadComponent: () => import('./chef/chef-administration/chef-administration.component').then(m => m.ChefAdministrationComponent) }
+    ]
+  },
+  { path: 'chef-old', component: ChefCalendarComponent, canActivate: [AuthGuard] },
   {
     path: 'home',
     component: HomeComponent,
