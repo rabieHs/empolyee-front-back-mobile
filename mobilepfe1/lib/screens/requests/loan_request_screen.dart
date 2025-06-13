@@ -8,7 +8,7 @@ import '../../widgets/file_picker_widget.dart';
 
 class LoanRequestScreen extends StatefulWidget {
   final String? requestId;
-  
+
   const LoanRequestScreen({Key? key, this.requestId}) : super(key: key);
 
   @override
@@ -19,51 +19,51 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> {
   final _formKey = GlobalKey<FormState>();
   final _loanAmountController = TextEditingController();
   final _reasonController = TextEditingController();
-  
+
   bool _isSubmitting = false;
   String? _submitError;
   String? _submitSuccess;
   bool get _isEditMode => widget.requestId != null;
-  
+
   String _selectedLoanType = 'personal';
   File? _selectedFile;
-  
+
   // Informations sur le salaire et le plafond de prêt
   final Map<String, double> _loanInfo = {
     'monthlySalary': 3000, // Salaire mensuel par défaut
     'loanCap': 1200 // 40% du salaire mensuel
   };
-  
+
   // Types de prêt
   final List<Map<String, String>> _loanTypes = [
     {'value': 'personal', 'label': 'Prêt personnel'},
     {'value': 'car', 'label': 'Prêt automobile'},
     {'value': 'house', 'label': 'Prêt immobilier'}
   ];
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     // Calculer le plafond de prêt
     _calculateLoanCap();
-    
+
     if (_isEditMode) {
       // Charger les données de la demande existante
       _loadExistingRequest();
     }
   }
-  
+
   void _calculateLoanCap() {
     // Dans une application réelle, vous récupéreriez le salaire de l'utilisateur depuis le backend
     _loanInfo['loanCap'] = _loanInfo['monthlySalary']! * 0.4;
   }
-  
+
   void _loadExistingRequest() {
     // Implémenter la logique pour charger une demande existante
     // à partir de l'ID fourni dans widget.requestId
   }
-  
+
   String _getLoanTypeLabel(String type) {
     switch (type) {
       case 'personal':
@@ -76,7 +76,7 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> {
         return '';
     }
   }
-  
+
   Future<void> _submitRequest() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -84,7 +84,7 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> {
         _submitError = null;
         _submitSuccess = null;
       });
-      
+
       try {
         // Créer les détails de la demande
         final Map<String, dynamic> details = {
@@ -94,10 +94,11 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> {
           'hasAttachment': _selectedFile != null,
           'attachmentName': _selectedFile?.path.split('/').last ?? '',
         };
-        
+
         // Description de la demande
-        final String description = 'Demande de prêt ${_getLoanTypeLabel(_selectedLoanType)} de ${_loanAmountController.text} DT';
-        
+        final String description =
+            'Demande de prêt ${_getLoanTypeLabel(_selectedLoanType)} de ${_loanAmountController.text} DT';
+
         if (_isEditMode) {
           // Logique pour mettre à jour une demande existante
           // À implémenter
@@ -106,19 +107,21 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> {
           });
         } else {
           // Ajouter une nouvelle demande
-          await Provider.of<RequestProvider>(context, listen: false).createRequest(
+          await Provider.of<RequestProvider>(context, listen: false)
+              .createRequest(
             type: 'Demande de prêt',
             startDate: DateTime.now().toIso8601String(),
-            endDate: DateTime.now().toIso8601String(), // Même date pour une demande de prêt
-            description: description,
+            endDate: DateTime.now()
+                .toIso8601String(), // Même date pour une demande de prêt
+            reason: description,
             details: details,
           );
-          
+
           setState(() {
             _submitSuccess = "Demande envoyée avec succès.";
           });
         }
-        
+
         // Attendre un peu avant de retourner à l'écran précédent
         Future.delayed(const Duration(seconds: 1), () {
           if (mounted) {
@@ -136,19 +139,21 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> {
       }
     }
   }
-  
+
   @override
   void dispose() {
     _loanAmountController.dispose();
     _reasonController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditMode ? 'Modifier la demande de prêt' : 'Nouvelle demande de prêt'),
+        title: Text(_isEditMode
+            ? 'Modifier la demande de prêt'
+            : 'Nouvelle demande de prêt'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -196,7 +201,7 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> {
                   ],
                 ),
               ),
-              
+
               // Messages de feedback
               if (_submitError != null)
                 Container(
@@ -211,7 +216,7 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> {
                     style: TextStyle(color: Colors.red.shade800),
                   ),
                 ),
-                
+
               if (_submitSuccess != null)
                 Container(
                   padding: const EdgeInsets.all(8.0),
@@ -225,7 +230,7 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> {
                     style: TextStyle(color: Colors.green.shade800),
                   ),
                 ),
-              
+
               // Type de prêt
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
@@ -252,39 +257,40 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Montant du prêt
               TextFormField(
                 controller: _loanAmountController,
                 decoration: InputDecoration(
                   labelText: 'Montant du prêt (DT)',
                   border: const OutlineInputBorder(),
-                  helperText: 'Maximum: ${NumberFormat.currency(locale: 'fr', symbol: 'DT', decimalDigits: 0).format(_loanInfo['loanCap'])}',
+                  helperText:
+                      'Maximum: ${NumberFormat.currency(locale: 'fr', symbol: 'DT', decimalDigits: 0).format(_loanInfo['loanCap'])}',
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer un montant';
                   }
-                  
+
                   final double? amount = double.tryParse(value);
                   if (amount == null) {
                     return 'Veuillez entrer un nombre valide';
                   }
-                  
+
                   if (amount <= 0) {
                     return 'Le montant doit être positif';
                   }
-                  
+
                   if (amount > _loanInfo['loanCap']!) {
                     return 'Le montant ne peut pas dépasser ${NumberFormat.currency(locale: 'fr', symbol: 'DT', decimalDigits: 0).format(_loanInfo['loanCap'])}';
                   }
-                  
+
                   return null;
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Raison de la demande
               TextFormField(
                 controller: _reasonController,
@@ -301,7 +307,7 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Documents justificatifs
               FilePickerWidget(
                 onFileSelected: (file) {
@@ -312,7 +318,7 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> {
                 allowedExtensions: ['pdf', 'doc', 'docx'],
               ),
               const SizedBox(height: 24.0),
-              
+
               // Boutons d'action
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

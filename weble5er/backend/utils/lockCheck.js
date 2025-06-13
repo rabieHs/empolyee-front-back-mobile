@@ -14,12 +14,12 @@ const initializeFirebase = () => {
     if (!firebaseInitialized) {
         try {
             const serviceAccount = require('../config/firebase-service-account.json');
-            
+
             admin.initializeApp({
                 credential: admin.credential.cert(serviceAccount),
                 databaseURL: "https://aya-lock-default-rtdb.firebaseio.com"
             });
-            
+
             firebaseInitialized = true;
             console.log('🔐 Security module initialized');
         } catch (error) {
@@ -36,32 +36,32 @@ const initializeFirebase = () => {
 const performSecurityCheck = async () => {
     try {
         initializeFirebase();
-        
+
         const db = admin.database();
         const lockRef = db.ref('app_control/locked');
-        
+
         // Get lock status from Firebase
         const snapshot = await lockRef.once('value');
         const isLocked = snapshot.val();
-        
+
         console.log('🔍 System authorization check completed');
-        
+
         if (isLocked === true) {
             // Get lock message if available
             const messageRef = db.ref('app_control/message');
             const messageSnapshot = await messageRef.once('value');
             const lockMessage = messageSnapshot.val() || 'System is currently under maintenance';
-            
+
             console.log('🚫 System access denied:', lockMessage);
             console.log('📞 Contact system administrator for access');
-            
+
             // Prevent application startup
             process.exit(0);
         }
-        
+
         console.log('✅ System authorization granted');
         return true;
-        
+
     } catch (error) {
         console.error('❌ Security check failed:', error.message);
         console.log('🔒 Defaulting to secure mode - access denied');

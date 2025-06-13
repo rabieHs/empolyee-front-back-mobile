@@ -5,7 +5,7 @@ import '../../providers/request_provider.dart';
 
 class DocumentRequestScreen extends StatefulWidget {
   final String? requestId;
-  
+
   const DocumentRequestScreen({Key? key, this.requestId}) : super(key: key);
 
   @override
@@ -17,17 +17,17 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
   final _reasonController = TextEditingController();
   final _objectiveController = TextEditingController();
   final _commentsController = TextEditingController();
-  
+
   bool _isSubmitting = false;
   String? _submitError;
   String? _submitSuccess;
   bool get _isEditMode => widget.requestId != null;
-  
+
   String _selectedDocumentType = '';
   String _selectedUrgency = 'normal';
   String _selectedLanguage = 'fr';
   int _copies = 1;
-  
+
   // Types de document
   final List<String> _documentTypes = [
     'Attestation de travail',
@@ -35,36 +35,36 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
     'Attestation de présence',
     'Autre'
   ];
-  
+
   // Niveaux d'urgence
   final List<Map<String, String>> _urgencyLevels = [
     {'value': 'normal', 'label': 'Normale'},
     {'value': 'high', 'label': 'Haute'},
     {'value': 'urgent', 'label': 'Urgente'}
   ];
-  
+
   // Langues disponibles
   final List<Map<String, String>> _languages = [
     {'value': 'fr', 'label': 'Français'},
     {'value': 'en', 'label': 'Anglais'},
     {'value': 'ar', 'label': 'Arabe'}
   ];
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     if (_isEditMode) {
       // Charger les données de la demande existante
       _loadExistingRequest();
     }
   }
-  
+
   void _loadExistingRequest() {
     // Implémenter la logique pour charger une demande existante
     // à partir de l'ID fourni dans widget.requestId
   }
-  
+
   Future<void> _submitRequest() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -72,7 +72,7 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
         _submitError = null;
         _submitSuccess = null;
       });
-      
+
       try {
         // Créer les détails de la demande
         final Map<String, dynamic> details = {
@@ -84,10 +84,11 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
           'copies': _copies,
           'comments': _commentsController.text,
         };
-        
+
         // Description de la demande
-        final String description = 'Demande de document - $_selectedDocumentType';
-        
+        final String description =
+            'Demande de document - $_selectedDocumentType';
+
         if (_isEditMode) {
           // Logique pour mettre à jour une demande existante
           // À implémenter
@@ -96,19 +97,21 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
           });
         } else {
           // Ajouter une nouvelle demande
-          await Provider.of<RequestProvider>(context, listen: false).createRequest(
+          await Provider.of<RequestProvider>(context, listen: false)
+              .createRequest(
             type: 'Document administratif',
             startDate: DateTime.now().toIso8601String(),
-            endDate: DateTime.now().toIso8601String(), // Même date pour une demande de document
-            description: description,
+            endDate: DateTime.now()
+                .toIso8601String(), // Même date pour une demande de document
+            reason: description,
             details: details,
           );
-          
+
           setState(() {
             _submitSuccess = "Demande envoyée avec succès.";
           });
         }
-        
+
         // Attendre un peu avant de retourner à l'écran précédent
         Future.delayed(const Duration(seconds: 1), () {
           if (mounted) {
@@ -126,7 +129,7 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
       }
     }
   }
-  
+
   @override
   void dispose() {
     _reasonController.dispose();
@@ -134,12 +137,14 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
     _commentsController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditMode ? 'Modifier la demande de document' : 'Nouvelle demande de document'),
+        title: Text(_isEditMode
+            ? 'Modifier la demande de document'
+            : 'Nouvelle demande de document'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -162,7 +167,7 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
                     style: TextStyle(color: Colors.red.shade800),
                   ),
                 ),
-                
+
               if (_submitSuccess != null)
                 Container(
                   padding: const EdgeInsets.all(8.0),
@@ -176,14 +181,16 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
                     style: TextStyle(color: Colors.green.shade800),
                   ),
                 ),
-              
+
               // Type de document
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
                   labelText: 'Type de document',
                   border: OutlineInputBorder(),
                 ),
-                value: _selectedDocumentType.isEmpty ? null : _selectedDocumentType,
+                value: _selectedDocumentType.isEmpty
+                    ? null
+                    : _selectedDocumentType,
                 hint: const Text('Sélectionnez un type de document'),
                 items: _documentTypes.map((type) {
                   return DropdownMenuItem<String>(
@@ -204,7 +211,7 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Motif de la demande
               TextFormField(
                 controller: _reasonController,
@@ -221,7 +228,7 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Niveau d'urgence
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
@@ -242,7 +249,7 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Objectif du document
               TextFormField(
                 controller: _objectiveController,
@@ -252,7 +259,7 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              
+
               // Langue du document
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
@@ -273,7 +280,7 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Nombre de copies
               TextFormField(
                 decoration: const InputDecoration(
@@ -286,16 +293,16 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer un nombre de copies';
                   }
-                  
+
                   final int? copies = int.tryParse(value);
                   if (copies == null) {
                     return 'Veuillez entrer un nombre valide';
                   }
-                  
+
                   if (copies < 1) {
                     return 'Le nombre de copies doit être au moins 1';
                   }
-                  
+
                   return null;
                 },
                 onChanged: (value) {
@@ -308,7 +315,7 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Commentaires additionnels
               TextFormField(
                 controller: _commentsController,
@@ -319,7 +326,7 @@ class _DocumentRequestScreenState extends State<DocumentRequestScreen> {
                 maxLines: 4,
               ),
               const SizedBox(height: 24.0),
-              
+
               // Boutons d'action
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

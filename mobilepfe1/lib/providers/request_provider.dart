@@ -32,14 +32,9 @@ class RequestProvider with ChangeNotifier {
 
     try {
       print('Chargement des demandes depuis l\'API...');
-      final fetchedRequests = await _requestService.fetchRequests();
-      if (fetchedRequests != null && fetchedRequests.isNotEmpty) {
-        _requests = fetchedRequests;
-        print('${fetchedRequests.length} demandes chargées depuis l\'API');
-      } else {
-        _requests = [];
-        print('Aucune demande trouvée depuis l\'API');
-      }
+      final fetchedRequests = await _requestService.getUserRequests();
+      _requests = fetchedRequests;
+      print('${fetchedRequests.length} demandes chargées depuis l\'API');
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -53,7 +48,7 @@ class RequestProvider with ChangeNotifier {
     required String type,
     required String startDate,
     required String endDate,
-    required String description,
+    String? reason,
     Map<String, dynamic>? details,
   }) async {
     _isLoading = true;
@@ -65,7 +60,7 @@ class RequestProvider with ChangeNotifier {
         type: type,
         startDate: startDate,
         endDate: endDate,
-        description: description,
+        reason: reason,
         details: details,
       );
       if (newRequest != null) {
@@ -91,7 +86,8 @@ class RequestProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _selectedRequest = await _requestService.getRequestDetails(requestId);
+      _selectedRequest =
+          await _requestService.getRequestById(int.parse(requestId));
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -117,7 +113,7 @@ class RequestProvider with ChangeNotifier {
             'Seules les demandes en attente peuvent être supprimées');
       }
 
-      final success = await _requestService.deleteRequest(requestId);
+      final success = await _requestService.deleteRequest(int.parse(requestId));
       if (success) {
         _requests.removeWhere((req) => req.id == requestId);
         notifyListeners();

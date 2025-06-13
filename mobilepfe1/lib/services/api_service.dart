@@ -17,7 +17,7 @@ class ApiService {
   ApiService._internal();
 
   // Récupérer toutes les demandes depuis la base (via API)
-  Future<List<Request>> getAllRequests() async {
+  Future<List<Request>> getllRequests() async {
     try {
       final token = await _authService.getToken();
       final response = await http.get(

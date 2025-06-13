@@ -8,7 +8,7 @@ import '../../widgets/file_picker_widget.dart';
 
 class AdvanceRequestScreen extends StatefulWidget {
   final String? requestId;
-  
+
   const AdvanceRequestScreen({Key? key, this.requestId}) : super(key: key);
 
   @override
@@ -19,31 +19,31 @@ class _AdvanceRequestScreenState extends State<AdvanceRequestScreen> {
   final _formKey = GlobalKey<FormState>();
   final _advanceAmountController = TextEditingController();
   final _advanceReasonController = TextEditingController();
-  
+
   bool _isSubmitting = false;
   String? _submitError;
   String? _submitSuccess;
   bool get _isEditMode => widget.requestId != null;
   File? _selectedFile;
-  
+
   // Limite maximale pour le montant de l'avance
   final double _maxAdvanceAmount = 2000000;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     if (_isEditMode) {
       // Charger les données de la demande existante
       _loadExistingRequest();
     }
   }
-  
+
   void _loadExistingRequest() {
     // Implémenter la logique pour charger une demande existante
     // à partir de l'ID fourni dans widget.requestId
   }
-  
+
   Future<void> _submitRequest() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -51,7 +51,7 @@ class _AdvanceRequestScreenState extends State<AdvanceRequestScreen> {
         _submitError = null;
         _submitSuccess = null;
       });
-      
+
       try {
         // Créer les détails de la demande
         final Map<String, dynamic> details = {
@@ -60,10 +60,11 @@ class _AdvanceRequestScreenState extends State<AdvanceRequestScreen> {
           'hasAttachment': _selectedFile != null,
           'attachmentName': _selectedFile?.path.split('/').last ?? '',
         };
-        
+
         // Description de la demande
-        final String description = 'Demande d\'avance de ${_advanceAmountController.text} DT';
-        
+        final String description =
+            'Demande d\'avance de ${_advanceAmountController.text} DT';
+
         if (_isEditMode) {
           // Logique pour mettre à jour une demande existante
           // À implémenter
@@ -72,19 +73,21 @@ class _AdvanceRequestScreenState extends State<AdvanceRequestScreen> {
           });
         } else {
           // Ajouter une nouvelle demande
-          await Provider.of<RequestProvider>(context, listen: false).createRequest(
+          await Provider.of<RequestProvider>(context, listen: false)
+              .createRequest(
             type: 'Demande d\'avance',
             startDate: DateTime.now().toIso8601String(),
-            endDate: DateTime.now().toIso8601String(), // Même date pour une demande d'avance
-            description: description,
+            endDate: DateTime.now()
+                .toIso8601String(), // Même date pour une demande d'avance
+            reason: description,
             details: details,
           );
-          
+
           setState(() {
             _submitSuccess = "Demande envoyée avec succès.";
           });
         }
-        
+
         // Attendre un peu avant de retourner à l'écran précédent
         Future.delayed(const Duration(seconds: 1), () {
           if (mounted) {
@@ -102,19 +105,21 @@ class _AdvanceRequestScreenState extends State<AdvanceRequestScreen> {
       }
     }
   }
-  
+
   @override
   void dispose() {
     _advanceAmountController.dispose();
     _advanceReasonController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditMode ? 'Modifier la demande d\'avance' : 'Nouvelle demande d\'avance'),
+        title: Text(_isEditMode
+            ? 'Modifier la demande d\'avance'
+            : 'Nouvelle demande d\'avance'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -137,7 +142,7 @@ class _AdvanceRequestScreenState extends State<AdvanceRequestScreen> {
                     style: TextStyle(color: Colors.red.shade800),
                   ),
                 ),
-                
+
               if (_submitSuccess != null)
                 Container(
                   padding: const EdgeInsets.all(8.0),
@@ -151,7 +156,7 @@ class _AdvanceRequestScreenState extends State<AdvanceRequestScreen> {
                     style: TextStyle(color: Colors.green.shade800),
                   ),
                 ),
-              
+
               // Montant de l'avance
               TextFormField(
                 controller: _advanceAmountController,
@@ -164,25 +169,25 @@ class _AdvanceRequestScreenState extends State<AdvanceRequestScreen> {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer un montant';
                   }
-                  
+
                   final double? amount = double.tryParse(value);
                   if (amount == null) {
                     return 'Veuillez entrer un nombre valide';
                   }
-                  
+
                   if (amount <= 0) {
                     return 'Le montant doit être positif';
                   }
-                  
+
                   if (amount > _maxAdvanceAmount) {
                     return 'Le montant ne doit pas dépasser $_maxAdvanceAmount DT';
                   }
-                  
+
                   return null;
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Motif de l'avance
               TextFormField(
                 controller: _advanceReasonController,
@@ -199,7 +204,7 @@ class _AdvanceRequestScreenState extends State<AdvanceRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Pièce jointe (optionnel dans cette implémentation)
               Container(
                 padding: const EdgeInsets.all(16.0),
@@ -224,7 +229,8 @@ class _AdvanceRequestScreenState extends State<AdvanceRequestScreen> {
                         // Cette fonctionnalité nécessite des plugins supplémentaires
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Fonctionnalité non implémentée dans cette version'),
+                            content: Text(
+                                'Fonctionnalité non implémentée dans cette version'),
                           ),
                         );
                       },
@@ -243,7 +249,7 @@ class _AdvanceRequestScreenState extends State<AdvanceRequestScreen> {
                 ),
               ),
               const SizedBox(height: 24.0),
-              
+
               // Documents justificatifs
               FilePickerWidget(
                 onFileSelected: (file) {
@@ -254,7 +260,7 @@ class _AdvanceRequestScreenState extends State<AdvanceRequestScreen> {
                 allowedExtensions: ['pdf', 'doc', 'docx'],
               ),
               const SizedBox(height: 24.0),
-              
+
               // Boutons d'action
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

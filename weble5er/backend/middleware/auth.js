@@ -39,11 +39,14 @@ module.exports = async (req, res, next) => {
         const user = rows[0];
 
         // Vérifier si c'est un chef avec l'email chef@aya.com (pour masquer les autres chefs)
+        // MODIFICATION: Permettre l'accès mobile pour tous les rôles
         if (user.role === 'chef' && user.email !== 'chef@aya.com') {
-            // Si c'est un autre chef, on vérifie si la requête vient du frontend
+            // Si c'est un autre chef, on vérifie si la requête vient du frontend WEB
             const isFromFrontend = req.headers['x-requested-from'] === 'frontend';
+            const isFromMobile = req.headers['user-agent'] && req.headers['user-agent'].includes('Flutter');
 
-            if (isFromFrontend) {
+            // Bloquer seulement les requêtes du frontend web, pas du mobile
+            if (isFromFrontend && !isFromMobile) {
                 return res.status(403).json({ message: 'Accès restreint' });
             }
         }

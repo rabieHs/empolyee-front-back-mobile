@@ -140,13 +140,13 @@ class _CreateRequestScreenState extends State<CreateRequestScreen> {
         // Créer l'objet Request
         final request = Request(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
+          userId: 1, // TODO: Get actual user ID
           type: _selectedRequestType,
           description: _descriptionController.text,
           startDate: _startDate.toIso8601String(),
           endDate: _endDate.toIso8601String(),
           status: 'En attente',
           createdAt: DateTime.now().toIso8601String(),
-          userId: 1, // Convertir en int car le modèle attend un int
           details: details,
         );
 
@@ -156,7 +156,7 @@ class _CreateRequestScreenState extends State<CreateRequestScreen> {
           type: _selectedRequestType,
           startDate: _startDate.toIso8601String(),
           endDate: _endDate.toIso8601String(),
-          description: _descriptionController.text,
+          reason: _descriptionController.text,
           details: details,
         );
 

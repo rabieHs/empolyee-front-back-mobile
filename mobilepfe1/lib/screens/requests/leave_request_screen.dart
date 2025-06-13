@@ -8,7 +8,7 @@ import '../../widgets/file_picker_widget.dart';
 
 class LeaveRequestScreen extends StatefulWidget {
   final String? requestId;
-  
+
   const LeaveRequestScreen({Key? key, this.requestId}) : super(key: key);
 
   @override
@@ -18,18 +18,18 @@ class LeaveRequestScreen extends StatefulWidget {
 class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
   final _formKey = GlobalKey<FormState>();
   final _reasonController = TextEditingController();
-  
+
   bool _isSubmitting = false;
   String? _submitError;
   String? _submitSuccess;
   bool get _isEditMode => widget.requestId != null;
-  
+
   String _selectedLeaveType = 'annuel';
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now().add(const Duration(days: 1));
   String _selectedDayPart = 'full';
   File? _selectedFile;
-  
+
   // Options pour les types de congé
   final List<Map<String, String>> _leaveTypes = [
     {'value': 'annuel', 'label': 'Congé annuel (weekends inclus)'},
@@ -39,40 +39,42 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
     {'value': 'maternity', 'label': 'Congé maternité'},
     {'value': 'paternity', 'label': 'Congé paternité'}
   ];
-  
+
   // Options pour les périodes de la journée
   final List<Map<String, String>> _dayParts = [
     {'value': 'full', 'label': 'Journée complète'},
     {'value': 'morning', 'label': 'Matin'},
     {'value': 'afternoon', 'label': 'Après-midi'}
   ];
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     if (_isEditMode) {
       // Charger les données de la demande existante
       _loadExistingRequest();
     }
   }
-  
+
   void _loadExistingRequest() {
     // Implémenter la logique pour charger une demande existante
     // à partir de l'ID fourni dans widget.requestId
   }
-  
+
   void _onLeaveTypeChange() {
-    if (_selectedLeaveType == 'maternity' || _selectedLeaveType == 'paternity') {
+    if (_selectedLeaveType == 'maternity' ||
+        _selectedLeaveType == 'paternity') {
       // Calculer la date de fin en fonction du type de congé
       final days = _selectedLeaveType == 'maternity' ? 98 : 25;
-      final end = DateTime(_startDate.year, _startDate.month, _startDate.day + days);
+      final end =
+          DateTime(_startDate.year, _startDate.month, _startDate.day + days);
       setState(() {
         _endDate = end;
       });
     }
   }
-  
+
   Future<void> _selectStartDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -80,7 +82,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
-    
+
     if (picked != null && picked != _startDate) {
       setState(() {
         _startDate = picked;
@@ -88,33 +90,34 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
         if (_endDate.isBefore(_startDate)) {
           _endDate = _startDate;
         }
-        
+
         // Mettre à jour la date de fin pour les congés spéciaux
         _onLeaveTypeChange();
       });
     }
   }
-  
+
   Future<void> _selectEndDate(BuildContext context) async {
     // Ne pas permettre la sélection pour les congés maternité/paternité
-    if (_selectedLeaveType == 'maternity' || _selectedLeaveType == 'paternity') {
+    if (_selectedLeaveType == 'maternity' ||
+        _selectedLeaveType == 'paternity') {
       return;
     }
-    
+
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _endDate.isBefore(_startDate) ? _startDate : _endDate,
       firstDate: _startDate,
       lastDate: DateTime(2100),
     );
-    
+
     if (picked != null && picked != _endDate) {
       setState(() {
         _endDate = picked;
       });
     }
   }
-  
+
   Future<void> _submitRequest() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -122,7 +125,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
         _submitError = null;
         _submitSuccess = null;
       });
-      
+
       try {
         // Créer les détails de la demande
         final Map<String, dynamic> details = {
@@ -132,10 +135,11 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
           'hasAttachment': _selectedFile != null,
           'attachmentName': _selectedFile?.path.split('/').last ?? '',
         };
-        
+
         // Description de la demande
-        final String description = 'Demande de congé du ${DateFormat('yyyy-MM-dd').format(_startDate)} au ${DateFormat('yyyy-MM-dd').format(_endDate)}';
-        
+        final String description =
+            'Demande de congé du ${DateFormat('yyyy-MM-dd').format(_startDate)} au ${DateFormat('yyyy-MM-dd').format(_endDate)}';
+
         if (_isEditMode) {
           // Logique pour mettre à jour une demande existante
           // À implémenter
@@ -144,19 +148,20 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
           });
         } else {
           // Ajouter une nouvelle demande
-          await Provider.of<RequestProvider>(context, listen: false).createRequest(
+          await Provider.of<RequestProvider>(context, listen: false)
+              .createRequest(
             type: 'Congé',
             startDate: _startDate.toIso8601String(),
             endDate: _endDate.toIso8601String(),
-            description: description,
+            reason: description,
             details: details,
           );
-          
+
           setState(() {
             _submitSuccess = "Demande envoyée avec succès.";
           });
         }
-        
+
         // Attendre un peu avant de retourner à l'écran précédent
         Future.delayed(const Duration(seconds: 1), () {
           if (mounted) {
@@ -174,18 +179,20 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
       }
     }
   }
-  
+
   @override
   void dispose() {
     _reasonController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditMode ? 'Modifier la demande de congé' : 'Nouvelle demande de congé'),
+        title: Text(_isEditMode
+            ? 'Modifier la demande de congé'
+            : 'Nouvelle demande de congé'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -208,7 +215,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
                     style: TextStyle(color: Colors.red.shade800),
                   ),
                 ),
-                
+
               if (_submitSuccess != null)
                 Container(
                   padding: const EdgeInsets.all(8.0),
@@ -222,7 +229,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
                     style: TextStyle(color: Colors.green.shade800),
                   ),
                 ),
-              
+
               // Type de congé
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
@@ -250,7 +257,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Date de début
               InkWell(
                 onTap: () => _selectStartDate(context),
@@ -266,7 +273,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              
+
               // Date de fin
               InkWell(
                 onTap: () => _selectEndDate(context),
@@ -275,7 +282,8 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
                     labelText: 'Date de fin',
                     border: const OutlineInputBorder(),
                     suffixIcon: const Icon(Icons.calendar_today),
-                    enabled: !(_selectedLeaveType == 'maternity' || _selectedLeaveType == 'paternity'),
+                    enabled: !(_selectedLeaveType == 'maternity' ||
+                        _selectedLeaveType == 'paternity'),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,7 +306,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              
+
               // Période de la journée
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
@@ -325,7 +333,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Motif
               TextFormField(
                 controller: _reasonController,
@@ -342,7 +350,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
                 },
               ),
               const SizedBox(height: 24.0),
-              
+
               // Documents justificatifs
               const SizedBox(height: 16.0),
               FilePickerWidget(
@@ -354,7 +362,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
                 allowedExtensions: ['pdf', 'doc', 'docx'],
               ),
               const SizedBox(height: 24.0),
-              
+
               // Boutons d'action
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

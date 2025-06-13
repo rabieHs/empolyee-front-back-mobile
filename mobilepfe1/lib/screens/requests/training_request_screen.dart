@@ -8,7 +8,7 @@ import '../../widgets/file_picker_widget.dart';
 
 class TrainingRequestScreen extends StatefulWidget {
   final String? requestId;
-  
+
   const TrainingRequestScreen({Key? key, this.requestId}) : super(key: key);
 
   @override
@@ -21,23 +21,23 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
   final _organizationController = TextEditingController();
   final _objectivesController = TextEditingController();
   final _costController = TextEditingController();
-  
+
   bool _isSubmitting = false;
   String? _submitError;
   String? _submitSuccess;
   bool get _isEditMode => widget.requestId != null;
-  
+
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now().add(const Duration(days: 1));
   File? _selectedFile;
   String _selectedTrainingType = 'technical';
-  
+
   // Départements et thèmes
   String _selectedDepartment = '';
   String _selectedTheme = '';
   String _selectedTopic = '';
   List<String> _availableTopics = [];
-  
+
   // Structure des départements, thèmes et sujets
   final List<Map<String, dynamic>> _departments = [
     {
@@ -52,7 +52,12 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
         {
           'id': 'mobile',
           'name': 'Développement Mobile',
-          'topics': ['React Native', 'Flutter', 'iOS (Swift)', 'Android (Kotlin)']
+          'topics': [
+            'React Native',
+            'Flutter',
+            'iOS (Swift)',
+            'Android (Kotlin)'
+          ]
         },
         {
           'id': 'backend',
@@ -72,42 +77,41 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
       ]
     }
   ];
-  
+
   // Types de formation
   final List<Map<String, String>> _trainingTypes = [
     {'value': 'technical', 'label': 'Technique'},
     {'value': 'soft', 'label': 'Soft Skills'},
     {'value': 'certification', 'label': 'Certification'}
   ];
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     if (_isEditMode) {
       // Charger les données de la demande existante
       _loadExistingRequest();
     }
   }
-  
+
   void _loadExistingRequest() {
     // Implémenter la logique pour charger une demande existante
     // à partir de l'ID fourni dans widget.requestId
   }
-  
+
   void _onDepartmentChange() {
     final department = _departments.firstWhere(
-      (d) => d['id'] == _selectedDepartment,
-      orElse: () => {'themes': []}
-    );
-    
+        (d) => d['id'] == _selectedDepartment,
+        orElse: () => {'themes': []});
+
     setState(() {
       _selectedTheme = '';
       _selectedTopic = '';
       _availableTopics = [];
     });
   }
-  
+
   void _onThemeChange() {
     if (_selectedDepartment.isEmpty || _selectedTheme.isEmpty) {
       setState(() {
@@ -116,23 +120,21 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
       });
       return;
     }
-    
+
     final department = _departments.firstWhere(
-      (d) => d['id'] == _selectedDepartment,
-      orElse: () => {'themes': []}
-    );
-    
+        (d) => d['id'] == _selectedDepartment,
+        orElse: () => {'themes': []});
+
     final theme = (department['themes'] as List).firstWhere(
-      (t) => t['id'] == _selectedTheme,
-      orElse: () => {'topics': []}
-    );
-    
+        (t) => t['id'] == _selectedTheme,
+        orElse: () => {'topics': []});
+
     setState(() {
       _availableTopics = List<String>.from(theme['topics'] ?? []);
       _selectedTopic = '';
     });
   }
-  
+
   Future<void> _selectStartDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -140,7 +142,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
-    
+
     if (picked != null && picked != _startDate) {
       setState(() {
         _startDate = picked;
@@ -151,7 +153,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
       });
     }
   }
-  
+
   Future<void> _selectEndDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -159,15 +161,14 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
       firstDate: _startDate,
       lastDate: DateTime(2100),
     );
-    
+
     if (picked != null && picked != _endDate) {
       setState(() {
         _endDate = picked;
       });
     }
   }
-  
-  
+
   Future<void> _submitRequest() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -175,7 +176,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
         _submitError = null;
         _submitSuccess = null;
       });
-      
+
       try {
         // Créer les détails de la demande
         final Map<String, dynamic> details = {
@@ -190,10 +191,10 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
           'hasAttachment': _selectedFile != null,
           'attachmentName': _selectedFile?.path.split('/').last ?? '',
         };
-        
+
         // Description de la demande
         final String description = 'Formation: ${_titleController.text}';
-        
+
         if (_isEditMode) {
           // Logique pour mettre à jour une demande existante
           // À implémenter
@@ -202,19 +203,20 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
           });
         } else {
           // Ajouter une nouvelle demande
-          await Provider.of<RequestProvider>(context, listen: false).createRequest(
+          await Provider.of<RequestProvider>(context, listen: false)
+              .createRequest(
             type: 'Formation',
             startDate: _startDate.toIso8601String(),
             endDate: _endDate.toIso8601String(),
-            description: description,
+            reason: description,
             details: details,
           );
-          
+
           setState(() {
             _submitSuccess = "Demande envoyée avec succès.";
           });
         }
-        
+
         // Attendre un peu avant de retourner à l'écran précédent
         Future.delayed(const Duration(seconds: 1), () {
           if (mounted) {
@@ -232,7 +234,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
       }
     }
   }
-  
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -241,12 +243,14 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
     _costController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditMode ? 'Modifier la demande de formation' : 'Nouvelle demande de formation'),
+        title: Text(_isEditMode
+            ? 'Modifier la demande de formation'
+            : 'Nouvelle demande de formation'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -269,7 +273,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                     style: TextStyle(color: Colors.red.shade800),
                   ),
                 ),
-                
+
               if (_submitSuccess != null)
                 Container(
                   padding: const EdgeInsets.all(8.0),
@@ -283,7 +287,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                     style: TextStyle(color: Colors.green.shade800),
                   ),
                 ),
-              
+
               // Titre de la formation
               TextFormField(
                 controller: _titleController,
@@ -299,7 +303,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Organisme de formation
               TextFormField(
                 controller: _organizationController,
@@ -315,7 +319,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Date de début
               InkWell(
                 onTap: () => _selectStartDate(context),
@@ -331,7 +335,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              
+
               // Date de fin
               InkWell(
                 onTap: () => _selectEndDate(context),
@@ -347,7 +351,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              
+
               // Département
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
@@ -376,7 +380,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Thème de formation (si un département est sélectionné)
               if (_selectedDepartment.isNotEmpty)
                 DropdownButtonFormField<String>(
@@ -387,16 +391,14 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                   value: _selectedTheme.isEmpty ? null : _selectedTheme,
                   hint: const Text('Sélectionnez un thème'),
                   items: _departments
-                      .firstWhere(
-                        (d) => d['id'] == _selectedDepartment,
-                        orElse: () => {'themes': []}
-                      )['themes']
+                      .firstWhere((d) => d['id'] == _selectedDepartment,
+                          orElse: () => {'themes': []})['themes']
                       .map<DropdownMenuItem<String>>((theme) {
-                        return DropdownMenuItem<String>(
-                          value: theme['id'] as String,
-                          child: Text(theme['name'] as String),
-                        );
-                      }).toList(),
+                    return DropdownMenuItem<String>(
+                      value: theme['id'] as String,
+                      child: Text(theme['name'] as String),
+                    );
+                  }).toList(),
                   onChanged: (value) {
                     setState(() {
                       _selectedTheme = value!;
@@ -410,9 +412,8 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                     return null;
                   },
                 ),
-              if (_selectedDepartment.isNotEmpty)
-                const SizedBox(height: 16.0),
-              
+              if (_selectedDepartment.isNotEmpty) const SizedBox(height: 16.0),
+
               // Sujet spécifique (si un thème est sélectionné)
               if (_selectedTheme.isNotEmpty && _availableTopics.isNotEmpty)
                 DropdownButtonFormField<String>(
@@ -442,7 +443,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                 ),
               if (_selectedTheme.isNotEmpty && _availableTopics.isNotEmpty)
                 const SizedBox(height: 16.0),
-              
+
               // Type de formation
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
@@ -469,7 +470,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Objectifs de la formation
               TextFormField(
                 controller: _objectivesController,
@@ -486,7 +487,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Coût de la formation
               TextFormField(
                 controller: _costController,
@@ -506,7 +507,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                 },
               ),
               const SizedBox(height: 24.0),
-              
+
               // Documents justificatifs
               const SizedBox(height: 16.0),
               FilePickerWidget(
@@ -518,7 +519,7 @@ class _TrainingRequestScreenState extends State<TrainingRequestScreen> {
                 allowedExtensions: ['pdf', 'doc', 'docx'],
               ),
               const SizedBox(height: 24.0),
-              
+
               // Boutons d'action
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

@@ -2,7 +2,7 @@ name: portail_rh_mobile
 description: "Application mobile pour le portail RH"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -36,48 +36,48 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  
+
   # HTTP client pour les requêtes API
   http: ^1.4.0
   http_parser: ^4.0.2
-  
+
   # WebSocket pour les notifications en temps réel
   web_socket_channel: ^2.4.0
   socket_io_client: ^2.0.3+1
-  
+
   # Gestion d'état
   provider: ^6.1.2
-  
+
   # Stockage local sécurisé pour les tokens
   flutter_secure_storage: ^9.0.0
-  
+
   # Base de données MySQL
   mysql1: ^0.20.0
-  
+
   # Génération d'identifiants uniques
   uuid: ^4.3.3
-  
+
   # Pour formater les dates
   intl: ^0.19.0
-  
+
   # Notifications locales
-  flutter_local_notifications: ^16.3.2
-  
+  flutter_local_notifications: ^17.2.2
+
   # Pour accéder à la caméra et à la galerie de photos
   image_picker: ^1.0.7
-  
+
   # Pour la sélection de fichiers
-  file_picker: ^6.1.1
-  
+  file_picker: ^8.1.2
+
   # Pour les animations et transitions fluides
   animations: ^2.0.11
-  
+
   # Pour le stockage local des données partagées
   shared_preferences: ^2.2.2
-  
+
   # Pour les formulaires et validations
   form_field_validator: ^1.1.0
-  
+
   # Pour les icônes et design
   font_awesome_flutter: ^10.7.0
 
@@ -97,7 +97,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

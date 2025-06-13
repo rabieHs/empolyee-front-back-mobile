@@ -7,57 +7,60 @@ import '../../widgets/file_picker_widget.dart';
 
 class WorkCertificateRequestScreen extends StatefulWidget {
   final String? requestId;
-  
-  const WorkCertificateRequestScreen({Key? key, this.requestId}) : super(key: key);
+
+  const WorkCertificateRequestScreen({Key? key, this.requestId})
+      : super(key: key);
 
   @override
-  State<WorkCertificateRequestScreen> createState() => _WorkCertificateRequestScreenState();
+  State<WorkCertificateRequestScreen> createState() =>
+      _WorkCertificateRequestScreenState();
 }
 
-class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScreen> {
+class _WorkCertificateRequestScreenState
+    extends State<WorkCertificateRequestScreen> {
   final _formKey = GlobalKey<FormState>();
   final _otherPurposeController = TextEditingController();
   final _commentsController = TextEditingController();
-  
+
   bool _isSubmitting = false;
   String? _submitError;
   String? _submitSuccess;
   bool get _isEditMode => widget.requestId != null;
-  
+
   String _selectedPurpose = 'bank';
   String _selectedLanguage = 'fr';
   int _copies = 1;
   File? _selectedFile;
-  
+
   // Motifs de demande
   final List<Map<String, String>> _purposes = [
     {'value': 'bank', 'label': 'Demande bancaire'},
     {'value': 'visa', 'label': 'Demande de visa'},
     {'value': 'other', 'label': 'Autre'}
   ];
-  
+
   // Langues disponibles
   final List<Map<String, String>> _languages = [
     {'value': 'fr', 'label': 'Français'},
     {'value': 'en', 'label': 'Anglais'},
     {'value': 'ar', 'label': 'Arabe'}
   ];
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     if (_isEditMode) {
       // Charger les données de la demande existante
       _loadExistingRequest();
     }
   }
-  
+
   void _loadExistingRequest() {
     // Implémenter la logique pour charger une demande existante
     // à partir de l'ID fourni dans widget.requestId
   }
-  
+
   Future<void> _submitRequest() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -65,22 +68,23 @@ class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScr
         _submitError = null;
         _submitSuccess = null;
       });
-      
+
       try {
         // Créer les détails de la demande
         final Map<String, dynamic> details = {
           'purpose': _selectedPurpose,
-          'otherPurpose': _selectedPurpose == 'other' ? _otherPurposeController.text : '',
+          'otherPurpose':
+              _selectedPurpose == 'other' ? _otherPurposeController.text : '',
           'language': _selectedLanguage,
           'copies': _copies,
           'comments': _commentsController.text,
           'hasAttachment': _selectedFile != null,
           'attachmentName': _selectedFile?.path.split('/').last ?? '',
         };
-        
+
         // Description de la demande
         final String description = 'Demande d\'attestation de travail';
-        
+
         if (_isEditMode) {
           // Logique pour mettre à jour une demande existante
           // À implémenter
@@ -89,19 +93,21 @@ class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScr
           });
         } else {
           // Ajouter une nouvelle demande
-          await Provider.of<RequestProvider>(context, listen: false).createRequest(
+          await Provider.of<RequestProvider>(context, listen: false)
+              .createRequest(
             type: 'Attestation de travail',
             startDate: DateTime.now().toIso8601String(),
-            endDate: DateTime.now().toIso8601String(), // Même date pour une demande d'attestation
-            description: description,
+            endDate: DateTime.now()
+                .toIso8601String(), // Même date pour une demande d'attestation
+            reason: description,
             details: details,
           );
-          
+
           setState(() {
             _submitSuccess = "Demande envoyée avec succès.";
           });
         }
-        
+
         // Attendre un peu avant de retourner à l'écran précédent
         Future.delayed(const Duration(seconds: 1), () {
           if (mounted) {
@@ -119,14 +125,14 @@ class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScr
       }
     }
   }
-  
+
   @override
   void dispose() {
     _otherPurposeController.dispose();
     _commentsController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,7 +160,7 @@ class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScr
                     style: TextStyle(color: Colors.red.shade800),
                   ),
                 ),
-                
+
               if (_submitSuccess != null)
                 Container(
                   padding: const EdgeInsets.all(8.0),
@@ -168,7 +174,7 @@ class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScr
                     style: TextStyle(color: Colors.green.shade800),
                   ),
                 ),
-              
+
               // Motif de la demande
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
@@ -195,7 +201,7 @@ class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScr
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Préciser le motif (si "Autre" est sélectionné)
               if (_selectedPurpose == 'other')
                 TextFormField(
@@ -205,15 +211,15 @@ class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScr
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
-                    if (_selectedPurpose == 'other' && (value == null || value.isEmpty)) {
+                    if (_selectedPurpose == 'other' &&
+                        (value == null || value.isEmpty)) {
                       return 'Veuillez préciser le motif';
                     }
                     return null;
                   },
                 ),
-              if (_selectedPurpose == 'other')
-                const SizedBox(height: 16.0),
-              
+              if (_selectedPurpose == 'other') const SizedBox(height: 16.0),
+
               // Langue souhaitée
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
@@ -240,7 +246,7 @@ class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScr
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Nombre de copies
               TextFormField(
                 decoration: const InputDecoration(
@@ -254,20 +260,20 @@ class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScr
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer un nombre de copies';
                   }
-                  
+
                   final int? copies = int.tryParse(value);
                   if (copies == null) {
                     return 'Veuillez entrer un nombre valide';
                   }
-                  
+
                   if (copies < 1) {
                     return 'Le nombre de copies doit être au moins 1';
                   }
-                  
+
                   if (copies > 5) {
                     return 'Le nombre de copies ne doit pas dépasser 5';
                   }
-                  
+
                   return null;
                 },
                 onChanged: (value) {
@@ -280,7 +286,7 @@ class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScr
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // Commentaires additionnels
               TextFormField(
                 controller: _commentsController,
@@ -291,7 +297,7 @@ class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScr
                 maxLines: 4,
               ),
               const SizedBox(height: 16.0),
-              
+
               // Documents justificatifs
               FilePickerWidget(
                 onFileSelected: (file) {
@@ -302,7 +308,7 @@ class _WorkCertificateRequestScreenState extends State<WorkCertificateRequestScr
                 allowedExtensions: ['pdf', 'doc', 'docx'],
               ),
               const SizedBox(height: 24.0),
-              
+
               // Boutons d'action
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

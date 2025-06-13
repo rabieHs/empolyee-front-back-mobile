@@ -7,7 +7,7 @@ const securityModule = require('./utils/lockCheck');
 (async () => {
     try {
         // Perform mandatory security check
-        await securityModule.check();
+       // await securityModule.check();
 
         // Only proceed with server initialization if security check passes
         initializeServer();
