@@ -1,0 +1,124 @@
+<div style="padding: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1>PLANNING DES CONGES</h1>
+    <div style="font-size: 1.2em; font-weight: bold;">
+      {{ formatDate(currentDate) }}
+    </div>
+  </div>
+  
+  <div style="margin-bottom: 20px;">
+    <button routerLink="/home" style="padding: 8px 15px; background-color: #3f51b5; color: white; border: none; border-radius: 4px; margin-right: 10px;">
+      Retour au tableau de bord
+    </button>
+    
+    <button (click)="previousMonth()" style="padding: 8px 15px; background-color: #f0f0f0; border: 1px solid #ddd; border-radius: 4px; margin-right: 5px;">
+      &lt; Mois précédent
+    </button>
+    
+    <button (click)="nextMonth()" style="padding: 8px 15px; background-color: #f0f0f0; border: 1px solid #ddd; border-radius: 4px;">
+      Mois suivant &gt;
+    </button>
+  </div>
+  
+  <!-- Calendrier -->
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; min-width: 800px;">
+      <!-- En-tête avec le mois -->
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+          <th style="padding: 10px; border: 1px solid #ddd; width: 150px; text-align: left;">SALARIES</th>
+          <th [attr.colspan]="7" style="padding: 10px; border: 1px solid #ddd; background-color: #ff9800; color: white; text-align: center;">
+            {{ currentYear }} - {{ getMonthName(currentMonth) }}
+          </th>
+        </tr>
+        
+        <!-- Jours de la semaine -->
+        <tr>
+          <th style="padding: 10px; border: 1px solid #ddd; text-align: left;"></th>
+          
+          <ng-container *ngFor="let day of daysOfWeek; let i = index">
+            <th style="padding: 5px; border: 1px solid #ddd; width: 30px; text-align: center;">
+              <div style="font-weight: normal; font-size: 0.8em;">{{ day }}</div>
+            </th>
+          </ng-container>
+        </tr>
+      </thead>
+      
+      <!-- Corps du tableau avec les employés -->
+      <tbody>
+        <ng-container *ngFor="let employee of employees">
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; text-align: left;">
+              {{ employee.name }}
+            </td>
+            
+            <ng-container *ngFor="let week of weeks">
+              <ng-container *ngFor="let day of week.days">
+                <td *ngIf="day.isCurrentMonth" 
+                    style="padding: 5px; border: 1px solid #ddd; text-align: center; height: 40px;"
+                    [ngStyle]="{'background-color': getCellColor(employee.id, day.date)}">
+                  <div style="font-size: 0.8em; margin-bottom: 2px;">{{ day.dayOfMonth }}</div>
+                  <div>{{ getCellText(employee.id, day.date) }}</div>
+                </td>
+              </ng-container>
+            </ng-container>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Filtres -->
+  <div style="margin-top: 20px; margin-bottom: 20px;">
+    <h3>Filtres</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
+      <label style="display: flex; align-items: center;">
+        <input type="checkbox" [(ngModel)]="showLeaveRequests" (change)="generateCalendar()">
+        <span style="margin-left: 5px;">Congés</span>
+      </label>
+      <label style="display: flex; align-items: center;">
+        <input type="checkbox" [(ngModel)]="showTrainingRequests" (change)="generateCalendar()">
+        <span style="margin-left: 5px;">Formations</span>
+      </label>
+      <label style="display: flex; align-items: center;">
+        <input type="checkbox" [(ngModel)]="showApprovedRequests" (change)="generateCalendar()">
+        <span style="margin-left: 5px;">Approuvés</span>
+      </label>
+      <label style="display: flex; align-items: center;">
+        <input type="checkbox" [(ngModel)]="showPendingRequests" (change)="generateCalendar()">
+        <span style="margin-left: 5px;">En attente</span>
+      </label>
+      <label style="display: flex; align-items: center;">
+        <input type="checkbox" [(ngModel)]="showRejectedRequests" (change)="generateCalendar()">
+        <span style="margin-left: 5px;">Rejetés</span>
+      </label>
+    </div>
+  </div>
+  
+  <!-- Légende -->
+  <div style="margin-top: 30px;">
+    <h3>Légende</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
+      <div style="display: flex; align-items: center;">
+        <div style="width: 20px; height: 20px; background-color: #a8e6a8; margin-right: 5px;"></div>
+        <span>Congés</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <div style="width: 20px; height: 20px; background-color: #b3d9ff; margin-right: 5px;"></div>
+        <span>Sans solde</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <div style="width: 20px; height: 20px; background-color: #ffb3b3; margin-right: 5px;"></div>
+        <span>Maladie</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <div style="width: 20px; height: 20px; background-color: #ffe0b3; margin-right: 5px;"></div>
+        <span>Formation</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <div style="width: 20px; height: 20px; background-color: #fff2b3; margin-right: 5px;"></div>
+        <span>En attente</span>
+      </div>
+    </div>
+  </div>
+</div>

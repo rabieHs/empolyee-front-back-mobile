@@ -1,0 +1,115 @@
+/* Styles pour le calendrier mensuel */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 5px;
+  text-align: center;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+.month-header {
+  background-color: #ff9800;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+.employee-name {
+  font-weight: bold;
+  text-align: left;
+  padding: 10px;
+  width: 150px;
+}
+
+.day-cell {
+  height: 40px;
+  vertical-align: middle;
+}
+
+.day-number {
+  font-size: 0.8em;
+  margin-bottom: 2px;
+}
+
+.leave {
+  background-color: #a8e6a8;
+}
+
+.training {
+  background-color: #ffe0b3;
+}
+
+.sans-solde {
+  background-color: #b3d9ff;
+}
+
+.pending {
+  background-color: #fff2b3;
+}
+
+.rejected {
+  background-color: #ffb3b3;
+}
+
+.nav-button {
+  padding: 8px 15px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.nav-button:hover {
+  background-color: #e0e0e0;
+}
+
+.dashboard-button {
+  padding: 8px 15px;
+  background-color: #3f51b5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.dashboard-button:hover {
+  background-color: #303f9f;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  table {
+    min-width: 600px;
+  }
+}

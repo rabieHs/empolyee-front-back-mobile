@@ -1,0 +1,100 @@
+<div class="calendar-container">
+  <!-- Message de débogage -->
+  <div class="alert alert-info" *ngIf="filteredRequests.length > 0">
+    {{ filteredRequests.length }} demandes chargées pour {{ getCurrentMonthName() }}
+  </div>
+  
+  <h2>Calendrier des demandes</h2>
+  
+  <div class="calendar-navigation">
+    <button class="nav-btn" (click)="changeMonth(-1)">
+      <i class="fas fa-chevron-left"></i> Précédent
+    </button>
+    <h3 class="current-month">{{ getCurrentMonthName() }}</h3>
+    <button class="nav-btn" (click)="changeMonth(1)">
+      Suivant <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+  
+  <div class="calendar-wrapper">
+    <!-- Afficher le nombre total de demandes pour débogage -->
+    <div style="margin-bottom: 10px; padding: 5px; background-color: #f8f9fa; border-radius: 4px;">
+      <strong>Nombre total de demandes:</strong> {{ filteredRequests.length }}
+    </div>
+
+    <div class="calendar-grid">
+      <!-- Jours de la semaine -->
+      <div class="weekday" *ngFor="let day of weekdays">
+        {{ day }}
+      </div>
+      
+      <!-- Jours du mois (générés dynamiquement) -->
+      <ng-container *ngFor="let day of daysInMonth">
+        <div class="day">
+          <div class="day-header">{{ day }}</div>
+          <div class="day-content">
+            <!-- Demandes pour ce jour (uniquement les demandes réelles) -->
+            <ng-container *ngFor="let request of getRequestsForDay(day)">
+              <!-- Ne pas afficher les demandes de test avec John ou Jane -->
+              <div 
+                *ngIf="isRealRequest(request)"
+                class="request-item" 
+                [ngClass]="getStatusClass(request.status || '')" 
+                (click)="viewRequestDetails(request)">
+                <strong>{{ request.type || 'Demande' }}</strong> - {{ request.user?.firstName || request.user?.firstname || 'Inconnu' }} {{ request.user?.lastName || request.user?.lastname || '' }}
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Modal de détails de la demande -->
+  <div class="request-details-modal" *ngIf="showRequestDetails && selectedRequest">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Détails de la demande</h3>
+        <button class="close-btn" (click)="closeRequestDetails()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="request-info">
+          <p><strong>Type:</strong> {{ selectedRequest.type }}</p>
+          <p><strong>Employé:</strong> {{ selectedRequest.user?.firstName || selectedRequest.user?.firstname || 'Inconnu' }} {{ selectedRequest.user?.lastName || selectedRequest.user?.lastname || '' }}</p>
+          <p><strong>Date de création:</strong> {{ formatDate(selectedRequest.createdAt || selectedRequest.date) }}</p>
+          <p><strong>Statut:</strong> <span [ngClass]="getStatusClass(selectedRequest.status || '')">{{ selectedRequest.status || 'Non défini' }}</span></p>
+          
+          <!-- Dates de début et fin (nouveaux champs) -->
+          <div *ngIf="selectedRequest.start_date">
+            <p><strong>Date de début:</strong> {{ formatDate(selectedRequest.start_date) }}</p>
+          </div>
+          
+          <div *ngIf="selectedRequest.end_date">
+            <p><strong>Date de fin:</strong> {{ formatDate(selectedRequest.end_date) }}</p>
+          </div>
+          
+          <!-- Anciens champs pour compatibilité -->
+          <div *ngIf="!selectedRequest.start_date && selectedRequest.details && selectedRequest.details.startDate">
+            <p><strong>Date de début:</strong> {{ formatDate(selectedRequest.details.startDate) }}</p>
+          </div>
+          
+          <div *ngIf="!selectedRequest.end_date && selectedRequest.details && selectedRequest.details.endDate">
+            <p><strong>Date de fin:</strong> {{ formatDate(selectedRequest.details.endDate) }}</p>
+          </div>
+          
+          <div *ngIf="selectedRequest.description">
+            <p><strong>Description:</strong> {{ selectedRequest.description }}</p>
+          </div>
+          
+          <div *ngIf="selectedRequest.chefObservation">
+            <p><strong>Observation du chef:</strong> {{ selectedRequest.chefObservation }}</p>
+          </div>
+          
+          <div *ngIf="selectedRequest.adminResponse">
+            <p><strong>Réponse de l'admin:</strong> {{ selectedRequest.adminResponse }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

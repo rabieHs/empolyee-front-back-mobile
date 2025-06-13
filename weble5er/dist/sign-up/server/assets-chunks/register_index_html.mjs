@@ -1,0 +1,134 @@
+export default `<!DOCTYPE html><html lang="en"><head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="utf-8">
+  <title>SignUp</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="styles.css"><style ng-app-id="ng">
+
+.register-container[_ngcontent-ng-c119650250] {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(
+      135deg,
+      #1e3c72 0%,
+      #2a5298 100%);
+  padding: 2rem;
+}
+.register-card[_ngcontent-ng-c119650250] {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+}
+h2[_ngcontent-ng-c119650250] {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.form-group[_ngcontent-ng-c119650250] {
+  margin-bottom: 1.5rem;
+}
+.form-row[_ngcontent-ng-c119650250] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+label[_ngcontent-ng-c119650250] {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #34495e;
+  font-size: 0.9rem;
+}
+input[_ngcontent-ng-c119650250], 
+select[_ngcontent-ng-c119650250], 
+textarea[_ngcontent-ng-c119650250] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+input[_ngcontent-ng-c119650250]:focus, 
+select[_ngcontent-ng-c119650250]:focus, 
+textarea[_ngcontent-ng-c119650250]:focus {
+  outline: none;
+  border-color: #3498db;
+}
+.error-message[_ngcontent-ng-c119650250] {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+button[_ngcontent-ng-c119650250] {
+  width: 100%;
+  padding: 1rem;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+button[_ngcontent-ng-c119650250]:hover {
+  background: #2980b9;
+}
+button[_ngcontent-ng-c119650250]:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+.login-link[_ngcontent-ng-c119650250] {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #7f8c8d;
+}
+.login-link[_ngcontent-ng-c119650250]   a[_ngcontent-ng-c119650250] {
+  color: #3498db;
+  text-decoration: none;
+  cursor: pointer;
+}
+.login-link[_ngcontent-ng-c119650250]   a[_ngcontent-ng-c119650250]:hover {
+  text-decoration: underline;
+}
+.show-password[_ngcontent-ng-c119650250] {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.show-password[_ngcontent-ng-c119650250]   input[type=checkbox][_ngcontent-ng-c119650250] {
+  width: auto;
+}
+@media (max-width: 600px) {
+  .form-row[_ngcontent-ng-c119650250] {
+    grid-template-columns: 1fr;
+  }
+}
+/*# sourceMappingURL=/register.component.css.map */</style></head>
+<body><!--nghm--><script type="text/javascript" id="ng-event-dispatch-contract">(()=>{function p(t,n,r,o,e,i,f,m){return{eventType:t,event:n,targetElement:r,eic:o,timeStamp:e,eia:i,eirp:f,eiack:m}}function u(t){let n=[],r=e=>{n.push(e)};return{c:t,q:n,et:[],etc:[],d:r,h:e=>{r(p(e.type,e,e.target,t,Date.now()))}}}function s(t,n,r){for(let o=0;o<n.length;o++){let e=n[o];(r?t.etc:t.et).push(e),t.c.addEventListener(e,t.h,r)}}function c(t,n,r,o,e=window){let i=u(t);e._ejsas||(e._ejsas={}),e._ejsas[n]=i,s(i,r),s(i,o,!0)}window.__jsaction_bootstrap=c;})();
+</script><script>window.__jsaction_bootstrap(document.body,"ng",["submit","input","compositionstart","compositionend","change","click"],["blur"]);</script>
+  <app-root ng-version="19.1.6" ngh="1" ng-server-context="ssg"><router-outlet></router-outlet><app-register _nghost-ng-c119650250="" ngh="0"><div _ngcontent-ng-c119650250="" class="register-container"><div _ngcontent-ng-c119650250="" class="register-card"><h2 _ngcontent-ng-c119650250="">Créer un compte</h2><form _ngcontent-ng-c119650250="" novalidate="" class="ng-untouched ng-pristine ng-invalid" jsaction="submit:;"><div _ngcontent-ng-c119650250="" class="form-group"><label _ngcontent-ng-c119650250="" for="email">Email</label><input _ngcontent-ng-c119650250="" type="email" id="email" name="email" required="" email="" ng-reflect-required="" ng-reflect-email="" ng-reflect-name="email" ng-reflect-model="" class="ng-untouched ng-pristine ng-invalid" value="" jsaction="input:;blur:;compositionstart:;compositionend:;"><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div><div _ngcontent-ng-c119650250="" class="form-group"><label _ngcontent-ng-c119650250="" for="password">Mot de passe</label><input _ngcontent-ng-c119650250="" id="password" name="password" required="" minlength="6" ng-reflect-required="" ng-reflect-minlength="6" ng-reflect-name="password" type="password" ng-reflect-model="" class="ng-untouched ng-pristine ng-invalid" value="" jsaction="input:;blur:;compositionstart:;compositionend:;"><div _ngcontent-ng-c119650250="" class="show-password"><input _ngcontent-ng-c119650250="" type="checkbox" id="showPassword" name="showPassword" ng-reflect-name="showPassword" ng-reflect-model="false" class="ng-untouched ng-pristine ng-valid" jsaction="change:;blur:;"><label _ngcontent-ng-c119650250="" for="showPassword">Afficher le mot de passe</label></div><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--></div><div _ngcontent-ng-c119650250="" class="form-row"><div _ngcontent-ng-c119650250="" class="form-group"><label _ngcontent-ng-c119650250="" for="firstName">Prénom</label><input _ngcontent-ng-c119650250="" type="text" id="firstName" name="firstName" required="" ng-reflect-required="" ng-reflect-name="firstName" ng-reflect-model="" class="ng-untouched ng-pristine ng-invalid" value="" jsaction="input:;blur:;compositionstart:;compositionend:;"></div><div _ngcontent-ng-c119650250="" class="form-group"><label _ngcontent-ng-c119650250="" for="lastName">Nom</label><input _ngcontent-ng-c119650250="" type="text" id="lastName" name="lastName" required="" ng-reflect-required="" ng-reflect-name="lastName" ng-reflect-model="" class="ng-untouched ng-pristine ng-invalid" value="" jsaction="input:;blur:;compositionstart:;compositionend:;"></div></div><!--bindings={
+  "ng-reflect-ng-if": ""
+}--><button _ngcontent-ng-c119650250="" type="submit" disabled=""><!--bindings={
+  "ng-reflect-ng-if": "false"
+}--><span _ngcontent-ng-c119650250="">S'inscrire</span><!--bindings={
+  "ng-reflect-ng-if": "true"
+}--></button><div _ngcontent-ng-c119650250="" class="login-link"> Déjà inscrit ? <a _ngcontent-ng-c119650250="" jsaction="click:;">Se connecter</a></div></form></div></div></app-register><!--container--></app-root>
+<script src="polyfills.js" type="module"></script><script src="main.js" type="module"></script>
+
+<script id="ng-state" type="application/json">{"__nghData__":[{"t":{"11":"t0","21":"t1","33":"t2","35":"t3","36":"t4"},"c":{"11":[],"21":[],"33":[],"35":[],"36":[{"i":"t4","r":1}]}},{"c":{"0":[{"i":"c119650250","r":1}]}}]}</script></body></html>`;

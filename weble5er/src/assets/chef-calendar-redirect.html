@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirection vers le Calendrier du Chef</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 100px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #5a189a;
+        }
+        .loading {
+            margin: 20px 0;
+            font-size: 18px;
+        }
+        .btn {
+            background: linear-gradient(90deg, #5a189a 0%, #43a2fa 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Redirection vers le Calendrier du Chef</h1>
+        <div class="loading">Chargement en cours...</div>
+        <p>Si vous n'êtes pas redirigé automatiquement, veuillez cliquer sur le bouton ci-dessous :</p>
+        <button class="btn" onclick="redirectToCalendar()">Accéder au Calendrier</button>
+    </div>
+
+    <script>
+        function redirectToCalendar() {
+            window.location.href = '/chef';
+        }
+        
+        // Redirection automatique après 2 secondes
+        setTimeout(redirectToCalendar, 2000);
+    </script>
+</body>
+</html>

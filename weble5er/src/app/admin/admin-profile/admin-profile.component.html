@@ -1,0 +1,271 @@
+<div class="profile-container">
+  <!-- Header -->
+  <div class="profile-header">
+    <div class="header-content">
+      <button class="btn btn-secondary back-button" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+      </button>
+      <h1 class="profile-title">
+        <i class="fas fa-user"></i>
+        {{ isAdmin ? 'Profil Administrateur' : isChef ? 'Profil Chef' : 'Profil' }}
+      </h1>
+    </div>
+  </div>
+
+  <!-- Message Alert -->
+  <div *ngIf="message" class="alert" [ngClass]="messageType === 'success' ? 'alert-success' : 'alert-error'">
+    <i class="fas" [ngClass]="messageType === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'"></i>
+    {{ message }}
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <i class="fas fa-spinner fa-spin"></i> Chargement...
+  </div>
+
+  <!-- Profile Section -->
+  <div class="profile-section">
+    <div class="section-header">
+      <h2><i class="fas fa-user-circle"></i> Mon Profil</h2>
+      <button *ngIf="!editingProfile" class="btn btn-primary" (click)="startEditingProfile()">
+        <i class="fas fa-edit"></i> Modifier
+      </button>
+    </div>
+
+    <div class="profile-card">
+      <!-- View Mode -->
+      <div *ngIf="!editingProfile" class="profile-view">
+        <div class="profile-info">
+          <div class="info-row">
+            <label>Prénom:</label>
+            <span>{{ currentUser?.firstname || 'Non défini' }}</span>
+          </div>
+          <div class="info-row">
+            <label>Nom:</label>
+            <span>{{ currentUser?.lastname || 'Non défini' }}</span>
+          </div>
+          <div class="info-row">
+            <label>Email:</label>
+            <span>{{ currentUser?.email || 'Non défini' }}</span>
+          </div>
+          <div class="info-row">
+            <label>Rôle:</label>
+            <span class="role-badge" [ngClass]="getRoleBadgeClass(currentUser?.role)">
+              {{ getRoleDisplayName(currentUser?.role) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Mode -->
+      <div *ngIf="editingProfile" class="profile-edit">
+        <form (ngSubmit)="saveProfile()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstname">Prénom *</label>
+              <input
+                type="text"
+                id="firstname"
+                [(ngModel)]="profileForm.firstname"
+                name="firstname"
+                class="form-control"
+                required>
+            </div>
+            <div class="form-group">
+              <label for="lastname">Nom *</label>
+              <input
+                type="text"
+                id="lastname"
+                [(ngModel)]="profileForm.lastname"
+                name="lastname"
+                class="form-control"
+                required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input
+              type="email"
+              id="email"
+              [(ngModel)]="profileForm.email"
+              name="email"
+              class="form-control"
+              required>
+          </div>
+
+          <div class="password-section">
+            <h4>Changer le mot de passe (optionnel)</h4>
+            <div class="form-group">
+              <label for="currentPassword">Mot de passe actuel</label>
+              <input
+                type="password"
+                id="currentPassword"
+                [(ngModel)]="profileForm.currentPassword"
+                name="currentPassword"
+                class="form-control">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="newPassword">Nouveau mot de passe</label>
+                <input
+                  type="password"
+                  id="newPassword"
+                  [(ngModel)]="profileForm.newPassword"
+                  name="newPassword"
+                  class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="confirmPassword">Confirmer le mot de passe</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  [(ngModel)]="profileForm.confirmPassword"
+                  name="confirmPassword"
+                  class="form-control">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="cancelEditingProfile()">
+              <i class="fas fa-times"></i> Annuler
+            </button>
+            <button type="submit" class="btn btn-success" [disabled]="loading">
+              <i class="fas fa-save"></i> Sauvegarder
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users Management Section (Admin Only) -->
+  <div *ngIf="isAdmin" class="users-section">
+    <div class="section-header">
+      <h2><i class="fas fa-users"></i> Gestion des Utilisateurs</h2>
+      <span class="users-count">{{ users.length }} utilisateur(s)</span>
+    </div>
+
+    <div class="users-table-container">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Rôle</th>
+            <th>Département</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users" [ngClass]="{'editing-row': editingUser?.id === user.id}">
+            <!-- View Mode -->
+            <ng-container *ngIf="editingUser?.id !== user.id">
+              <td>{{ user.firstname }} {{ user.lastname }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
+                  {{ getRoleDisplayName(user.role) }}
+                </span>
+              </td>
+              <td>{{ user.department_id || '-' }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn btn-sm btn-primary" (click)="startEditingUser(user)">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button
+                    class="btn btn-sm btn-danger"
+                    (click)="deleteUser(user)"
+                    [disabled]="user.id === currentUser?.id">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Edit Mode -->
+            <ng-container *ngIf="editingUser?.id === user.id">
+              <td>
+                <div class="inline-form">
+                  <input
+                    type="text"
+                    [(ngModel)]="userEditForm.firstname"
+                    class="form-control form-control-sm"
+                    placeholder="Prénom">
+                  <input
+                    type="text"
+                    [(ngModel)]="userEditForm.lastname"
+                    class="form-control form-control-sm"
+                    placeholder="Nom">
+                </div>
+              </td>
+              <td>
+                <input
+                  type="email"
+                  [(ngModel)]="userEditForm.email"
+                  class="form-control form-control-sm">
+              </td>
+              <td>
+                <select [(ngModel)]="userEditForm.role" class="form-control form-control-sm">
+                  <option value="user">Employé</option>
+                  <option value="chef">Chef</option>
+                  <option value="admin">Administrateur</option>
+                </select>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  [(ngModel)]="userEditForm.department"
+                  class="form-control form-control-sm"
+                  placeholder="Département">
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn btn-sm btn-success" (click)="saveUser()" [disabled]="loading">
+                    <i class="fas fa-check"></i>
+                  </button>
+                  <button class="btn btn-sm btn-secondary" (click)="cancelEditingUser()">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="users.length === 0 && !loading" class="no-users">
+        <i class="fas fa-users"></i>
+        <p>Aucun utilisateur trouvé</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users View Section (Chef Only) -->
+  <div *ngIf="isChef && !isAdmin" class="users-section">
+    <div class="section-header">
+      <h2><i class="fas fa-users"></i> Liste des Utilisateurs</h2>
+      <span class="users-count">{{ users.length }} utilisateur(s)</span>
+    </div>
+
+    <div class="users-grid">
+      <div *ngFor="let user of users" class="user-card">
+        <div class="user-info">
+          <h4>{{ user.firstname }} {{ user.lastname }}</h4>
+          <p class="user-email">{{ user.email }}</p>
+          <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
+            {{ getRoleDisplayName(user.role) }}
+          </span>
+          <p *ngIf="user.department_id" class="user-department">Département: {{ user.department_id }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="users.length === 0 && !loading" class="no-users">
+      <i class="fas fa-users"></i>
+      <p>Aucun utilisateur trouvé</p>
+    </div>
+  </div>
+</div>

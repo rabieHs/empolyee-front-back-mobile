@@ -1,0 +1,73 @@
+<div class="calendar-container">
+  <div class="calendar-header">
+    <h1>{{ months[currentMonth] }}</h1>
+    <div class="navigation-buttons">
+      <button (click)="previousMonth()" class="nav-button">&lt; Mois précédent</button>
+      <button (click)="nextMonth()" class="nav-button">Mois suivant &gt;</button>
+    </div>
+  </div>
+
+  <div class="calendar-grid">
+    <table class="calendar-table">
+      <thead>
+        <tr>
+          <th class="employee-column">ID</th>
+          <ng-container *ngFor="let day of daysInMonth">
+            <th [ngClass]="{'weekend': isWeekend(day)}">{{ day }}</th>
+          </ng-container>
+        </tr>
+        <tr>
+          <th></th>
+          <ng-container *ngFor="let day of daysInMonth; let i = index">
+            <th [ngClass]="{'weekend': isWeekend(day)}">
+              {{ daysOfWeek[i % 7] }}
+            </th>
+          </ng-container>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let employee of employees">
+          <tr>
+            <td class="employee-id">{{ employee.id }}</td>
+            <ng-container *ngFor="let day of daysInMonth">
+              <td 
+                [ngStyle]="{'background-color': getCellColor(employee.id, day)}"
+                [ngClass]="{'weekend': isWeekend(day)}">
+                {{ getCellContent(employee.id, day) }}
+              </td>
+            </ng-container>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="legend">
+    <h3>Légende</h3>
+    <div class="legend-items">
+      <div class="legend-item">
+        <div class="color-box" style="background-color: #a8e6a8;"></div>
+        <span>C - Congés</span>
+      </div>
+      <div class="legend-item">
+        <div class="color-box" style="background-color: #ffe0b3;"></div>
+        <span>F - Formation</span>
+      </div>
+      <div class="legend-item">
+        <div class="color-box" style="background-color: #fff2b3;"></div>
+        <span>En attente</span>
+      </div>
+      <div class="legend-item">
+        <div class="color-box" style="background-color: #ffb3b3;"></div>
+        <span>Refusé</span>
+      </div>
+      <div class="legend-item">
+        <span>J - Jour de travail</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="back-button">
+    <button routerLink="/home" class="btn-primary">Retour au tableau de bord</button>
+  </div>
+</div>

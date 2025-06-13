@@ -1,0 +1,633 @@
+.admin-dashboard {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: #333;
+    }
+
+    .admin-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+  }
+
+  // Styles pour les onglets de navigation
+  .admin-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dee2e6;
+
+    .tab-btn {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-size: 16px;
+      font-weight: 500;
+      color: #6c757d;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-right: 10px;
+
+      &:hover {
+        color: #007bff;
+      }
+
+      &.active {
+        color: #007bff;
+        border-bottom-color: #007bff;
+      }
+
+      i {
+        margin-right: 8px;
+      }
+    }
+  }
+
+  .admin-content {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+
+      h2 {
+        margin: 0;
+        color: #333;
+      }
+
+      .filter-section {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0;
+      }
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+      }
+
+      tr:hover {
+        background-color: #f5f5f5;
+      }
+
+      .btn {
+        margin-right: 5px;
+      }
+    }
+
+    // Styles pour la vue calendrier
+    &.calendar-view {
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        h2 {
+          margin: 0;
+          color: #333;
+        }
+
+        .calendar-navigation {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+
+          .current-month {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin: 0;
+            min-width: 180px;
+            text-align: center;
+          }
+        }
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+
+        .weekday {
+          text-align: center;
+          font-weight: 600;
+          padding: 10px;
+          background-color: #f8f9fa;
+          border-radius: 4px;
+        }
+
+        .day {
+          min-height: 100px;
+          border: 1px solid #e9ecef;
+          border-radius: 4px;
+          padding: 5px;
+          background-color: #fff;
+
+          .day-header {
+            text-align: right;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #6c757d;
+          }
+
+          .day-content {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+
+            .request-item {
+              padding: 3px 6px;
+              border-radius: 3px;
+              font-size: 0.8rem;
+              cursor: pointer;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              color: #fff;
+
+              &:hover {
+                opacity: 0.8;
+              }
+
+              &.status-approved {
+                background-color: #28a745; // Vert
+              }
+
+              &.status-rejected {
+                background-color: #dc3545; // Rouge
+              }
+
+              &.status-chef-approved {
+                background-color: #ffc107; // Jaune
+                color: #212529;
+              }
+
+              &.status-pending {
+                background-color: #3788d8; // Bleu
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Styles pour les statuts
+  .status-approved {
+    background-color: #28a745;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+
+  .status-rejected {
+    background-color: #dc3545;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+
+  .status-chef-approved {
+    background-color: #ffc107;
+    color: #212529;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+
+  .status-pending {
+    background-color: #3788d8;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+
+  // Styles pour les modals
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+
+    &.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-dialog {
+      width: 100%;
+      max-width: 600px;
+      margin: 30px auto;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      border-bottom: 1px solid #e0e0e0;
+
+      .modal-title {
+        margin: 0;
+        font-weight: 600;
+      }
+
+      .close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #666;
+
+        &:hover {
+          color: #333;
+        }
+      }
+    }
+
+    .modal-body {
+      padding: 20px;
+
+      .request-details {
+        p {
+          margin-bottom: 10px;
+        }
+
+        .chef-observation, .admin-response {
+          margin-top: 15px;
+          padding: 10px;
+          background-color: #f8f9fa;
+          border-radius: 4px;
+
+          h6 {
+            margin-top: 0;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+
+        label {
+          display: block;
+          margin-bottom: 5px;
+          font-weight: 500;
+        }
+
+        textarea {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          resize: vertical;
+        }
+      }
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding: 15px 20px;
+      border-top: 1px solid #e0e0e0;
+      gap: 10px;
+    }
+  }
+
+  // Styles pour les boutons
+  .btn {
+    padding: 8px 15px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+
+    &.btn-primary {
+      background-color: #007bff;
+      color: white;
+
+      &:hover {
+        background-color: #0069d9;
+      }
+    }
+
+    &.btn-secondary {
+      background-color: #6c757d;
+      color: white;
+
+      &:hover {
+        background-color: #5a6268;
+      }
+    }
+
+    &.btn-success {
+      background-color: #28a745;
+      color: white;
+
+      &:hover {
+        background-color: #218838;
+      }
+    }
+
+    &.btn-danger {
+      background-color: #dc3545;
+      color: white;
+
+      &:hover {
+        background-color: #c82333;
+      }
+    }
+
+    &.btn-outline-primary {
+      background-color: transparent;
+      color: #007bff;
+      border: 1px solid #007bff;
+
+      &:hover {
+        background-color: #007bff;
+        color: white;
+      }
+    }
+  }
+
+  // ===== Styles pour la gestion des utilisateurs =====
+
+  .users-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+      .stat-number {
+        display: block;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+    }
+  }
+
+  .users-table-container {
+    overflow-x: auto;
+
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      thead {
+        background-color: #f8f9fa;
+
+        th {
+          padding: 15px 12px;
+          text-align: left;
+          font-weight: 600;
+          color: #495057;
+          border-bottom: 2px solid #dee2e6;
+        }
+      }
+
+      tbody {
+        .user-row {
+          transition: background-color 0.2s;
+
+          &:hover {
+            background-color: #f8f9fa;
+          }
+
+          td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+          }
+        }
+      }
+
+      .user-info {
+        strong {
+          display: block;
+          margin-bottom: 2px;
+        }
+
+        small {
+          color: #6c757d;
+          font-size: 0.8rem;
+        }
+      }
+
+      .role-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+
+        &.role-admin {
+          background-color: #dc3545;
+          color: white;
+        }
+
+        &.role-chef {
+          background-color: #ffc107;
+          color: #212529;
+        }
+
+        &.role-user {
+          background-color: #28a745;
+          color: white;
+        }
+      }
+
+      .status-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+
+        &.status-active {
+          background-color: #d4edda;
+          color: #155724;
+        }
+
+        &.status-inactive {
+          background-color: #f8d7da;
+          color: #721c24;
+        }
+      }
+
+      .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+
+        i {
+          margin-right: 4px;
+        }
+      }
+    }
+
+    .no-users {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6c757d;
+
+      i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
+      }
+
+      p {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+  // Styles pour le modal des détails de demande amélioré
+  .modal-lg {
+    max-width: 800px;
+  }
+
+  .detail-row {
+    display: flex;
+    margin-bottom: 12px;
+
+    .detail-label {
+      font-weight: 600;
+      min-width: 140px;
+      color: #495057;
+    }
+
+    .detail-value {
+      flex: 1;
+      color: #212529;
+    }
+  }
+
+  .chef-observation, .admin-response {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid #007bff;
+
+    h6 {
+      margin: 0 0 10px 0;
+      color: #495057;
+
+      i {
+        margin-right: 8px;
+        color: #007bff;
+      }
+    }
+
+    .observation-content, .response-content {
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #e9ecef;
+
+      p {
+        margin: 0;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .admin-comment-section {
+    margin-top: 20px;
+
+    h6 {
+      margin-bottom: 10px;
+      color: #495057;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 10px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-family: inherit;
+      resize: vertical;
+
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
+    }
+  }
+
+  .admin-actions, .final-actions {
+    display: flex;
+    gap: 10px;
+
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+  }
+}

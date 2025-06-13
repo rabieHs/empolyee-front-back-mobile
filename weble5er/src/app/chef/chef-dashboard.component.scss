@@ -1,0 +1,67 @@
+/* Styles pour le tableau de bord du chef */
+.chef-dashboard {
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Animation pour les cartes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Style pour les cartes */
+.chef-dashboard .request-cards > div {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Styles pour les boutons */
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Styles pour les badges de statut */
+.status-pending {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.status-approved {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-rejected {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* Style pour les modals */
+.modal-overlay {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Styles pour les inputs */
+input, textarea {
+  transition: border-color 0.2s ease;
+}
+
+input:focus, textarea:focus {
+  border-color: #2196f3;
+  outline: none;
+}
+
+/* Styles pour les hover sur les cartes */
+.request-cards > div:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}

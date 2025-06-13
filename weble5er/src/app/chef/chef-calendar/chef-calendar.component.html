@@ -1,0 +1,215 @@
+<div class="chef-container">
+  <!-- App Bar Navigation -->
+  <nav class="navbar">
+    <div class="user-profile" (click)="goToProfile()">
+      <img src="assets/default-profile.svg" alt="Profile" class="profile-img">
+      <span>Chef</span>
+    </div>
+
+    <ul class="nav-links">
+      <li><a routerLink="/chef" routerLinkActive="active">Calendrier</a></li>
+      <li><a (click)="goToProfile()" style="cursor: pointer;">Profil</a></li>
+      <li class="notifications-menu-item">
+        <app-notifications></app-notifications>
+      </li>
+      <li><a routerLink="/home" class="logout-link">Retour à l'accueil</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="calendar-container">
+    <h1 class="calendar-main-title">Calendrier des Congés et Formations - Chef</h1>
+
+  <!-- Légende du calendrier -->
+  <div class="calendar-legend">
+    <div class="legend-container">
+      <div class="legend-item">
+        <span class="legend-color leave-annual"></span>
+        <span>Congé annuel</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color leave-sick"></span>
+        <span>Congé maladie</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color leave-maternity"></span>
+        <span>Congé maternité</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color leave-paternity"></span>
+        <span>Congé paternité</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color training"></span>
+        <span>Formation</span>
+      </div>
+      <div class="legend-divider"></div>
+      <div class="legend-item">
+        <span class="legend-status approved"></span>
+        <span>Approuvée</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-status chef-approved"></span>
+        <span>Chef approuvé</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-status chef-rejected"></span>
+        <span>Chef rejeté</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-status pending"></span>
+        <span>En attente</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="calendar-header">
+    <button class="btn btn-outline-primary" (click)="changeMonth(-1)">
+      <i class="fas fa-chevron-left"></i> Mois précédent
+    </button>
+    <h2 class="calendar-title">{{ getCurrentMonthName() }}</h2>
+    <button class="btn btn-outline-primary" (click)="changeMonth(1)">
+      Mois suivant <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+
+  <div class="calendar-grid">
+    <!-- En-têtes des jours de la semaine -->
+    <div class="weekday-header" *ngFor="let day of weekDays">
+      {{ day }}
+    </div>
+
+    <!-- Jours du mois -->
+    <div *ngFor="let day of calendarDays"
+         [ngClass]="{'calendar-day': true, 'empty-day': day === 0}">
+
+      <!-- Numéro du jour -->
+      <div class="day-number" *ngIf="day !== 0">{{ day }}</div>
+
+      <!-- Liste des demandes pour ce jour -->
+      <div class="day-requests" *ngIf="day !== 0 && getRequestsForDay(day).length > 0">
+        <div *ngFor="let request of getRequestsForDay(day)"
+             [ngClass]="[
+               'request-item',
+               getStatusClass(request.status || ''),
+               getRequestTypeClass(request.type || ''),
+               isFirstDay(request) ? 'first-day' : '',
+               isLastDay(request) ? 'last-day' : '',
+               !isFirstDay(request) && !isLastDay(request) ? 'middle-day' : ''
+             ]"
+             (click)="viewRequestDetails(request)">
+          <span class="request-type">{{ getShortRequestType(request.type || '') }}</span>
+          <span class="request-user">
+            <strong>{{ request.user?.firstname }} {{ request.user?.lastname || '' }}</strong>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour afficher les détails d'une demande -->
+<div class="request-details-modal" *ngIf="showRequestDetails" (click)="closeRequestDetails()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Détails de la demande</h3>
+      <button class="close-btn" (click)="closeRequestDetails()">&times;</button>
+    </div>
+    <div class="modal-body" *ngIf="selectedRequest">
+      <div class="detail-row">
+        <span class="detail-label">Type:</span>
+        <span class="detail-value">{{ selectedRequest.type }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Employé:</span>
+        <span class="detail-value">{{ selectedRequest.user?.firstname }} {{ selectedRequest.user?.lastname }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Date:</span>
+        <span class="detail-value">{{ formatDate(selectedRequest.date) }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Statut:</span>
+        <span class="detail-value" [ngClass]="getStatusClass(selectedRequest.status || '')">{{ selectedRequest.status }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Description:</span>
+        <span class="detail-value">{{ selectedRequest.description }}</span>
+      </div>
+
+      <!-- Détails spécifiques selon le type de demande -->
+      <div class="specific-details" *ngIf="selectedRequest.details">
+        <h4>Informations supplémentaires</h4>
+
+        <!-- Dates de début et fin (pour congés, formations, etc.) -->
+        <div class="detail-row" *ngIf="selectedRequest.details?.startDate || selectedRequest.start_date">
+          <span class="detail-label">Date de début:</span>
+          <span class="detail-value">{{ formatDate(selectedRequest.details?.startDate || selectedRequest.start_date) }}</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedRequest.details?.endDate || selectedRequest.end_date">
+          <span class="detail-label">Date de fin:</span>
+          <span class="detail-value">{{ formatDate(selectedRequest.details?.endDate || selectedRequest.end_date) }}</span>
+        </div>
+
+        <!-- Jours (pour congés) -->
+        <div class="detail-row" *ngIf="selectedRequest.details.days">
+          <span class="detail-label">Nombre de jours:</span>
+          <span class="detail-value">{{ selectedRequest.details.days }}</span>
+        </div>
+
+        <!-- Raison (pour congés, documents, etc.) -->
+        <div class="detail-row" *ngIf="selectedRequest.details.reason">
+          <span class="detail-label">Raison:</span>
+          <span class="detail-value">{{ selectedRequest.details.reason }}</span>
+        </div>
+      </div>
+
+      <!-- Actions du chef pour les demandes en attente -->
+      <div class="chef-actions" *ngIf="isRequestPending(selectedRequest)">
+        <h4>Actions du chef</h4>
+        <div class="action-buttons">
+          <button class="btn btn-success" (click)="approveRequest(selectedRequest)">
+            <i class="fas fa-check"></i> Approuver
+          </button>
+          <button class="btn btn-danger" (click)="rejectRequest(selectedRequest)">
+            <i class="fas fa-times"></i> Rejeter
+          </button>
+        </div>
+
+        <!-- Zone de commentaire optionnel -->
+        <div class="comment-section">
+          <label for="chefComment">Commentaire (optionnel):</label>
+          <textarea
+            id="chefComment"
+            class="form-control"
+            rows="3"
+            [(ngModel)]="chefComment"
+            placeholder="Ajoutez un commentaire sur cette demande...">
+          </textarea>
+        </div>
+      </div>
+
+      <!-- Affichage du commentaire du chef si déjà traité -->
+      <div class="chef-observation" *ngIf="selectedRequest.chefObservation">
+        <h4>Observation du chef</h4>
+        <p>{{ selectedRequest.chefObservation }}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeRequestDetails()">Fermer</button>
+
+      <!-- Boutons d'action dans le footer pour les demandes en attente -->
+      <div class="footer-actions" *ngIf="isRequestPending(selectedRequest)">
+        <button class="btn btn-success" (click)="approveRequestWithComment(selectedRequest)">
+          <i class="fas fa-check"></i> Approuver avec commentaire
+        </button>
+        <button class="btn btn-danger" (click)="rejectRequestWithComment(selectedRequest)">
+          <i class="fas fa-times"></i> Rejeter avec commentaire
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+

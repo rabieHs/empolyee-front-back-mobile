@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nettoyage des comptes chef</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #5a189a;
+            text-align: center;
+        }
+        .btn {
+            background: linear-gradient(90deg, #5a189a 0%, #43a2fa 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .user-list {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .user-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .user-item:last-child {
+            border-bottom: none;
+        }
+        .chef {
+            background-color: #e3f2fd;
+        }
+        .admin {
+            background-color: #fff3cd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nettoyage des comptes chef</h1>
+        <p>Cette page vous permet de supprimer tous les comptes chef sauf celui avec l'email <strong>chef@aya.com</strong>.</p>
+        
+        <button id="showUsers" class="btn">Afficher les utilisateurs actuels</button>
+        <button id="cleanChefs" class="btn">Supprimer tous les chefs sauf chef@aya.com</button>
+        
+        <div id="userListContainer" class="result">
+            <h2>Liste des utilisateurs</h2>
+            <div id="userList" class="user-list"></div>
+        </div>
+        
+        <div id="resultContainer" class="result">
+            <h2>Résultat</h2>
+            <p id="resultMessage"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('showUsers').addEventListener('click', function() {
+            try {
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const userListContainer = document.getElementById('userListContainer');
+                const userList = document.getElementById('userList');
+                
+                userList.innerHTML = '';
+                
+                if (users.length === 0) {
+                    userList.innerHTML = '<div class="user-item">Aucun utilisateur trouvé</div>';
+                } else {
+                    users.forEach(user => {
+                        const userItem = document.createElement('div');
+                        userItem.className = `user-item ${user.role}`;
+                        userItem.innerHTML = `
+                            <strong>Email:</strong> ${user.email || 'Non défini'}<br>
+                            <strong>Rôle:</strong> ${user.role || 'Non défini'}<br>
+                            <strong>Nom:</strong> ${user.firstName || ''} ${user.lastName || ''}
+                        `;
+                        userList.appendChild(userItem);
+                    });
+                }
+                
+                userListContainer.style.display = 'block';
+            } catch (error) {
+                showResult(false, 'Erreur lors de la récupération des utilisateurs: ' + error.message);
+            }
+        });
+        
+        document.getElementById('cleanChefs').addEventListener('click', function() {
+            try {
+                // Récupérer les utilisateurs du localStorage
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const initialCount = users.length;
+                
+                // Filtrer pour garder tous les utilisateurs qui ne sont pas des chefs
+                // et le chef avec l'email chef@aya.com
+                const filteredUsers = users.filter(user => 
+                    user.role !== 'chef' || user.email === 'chef@aya.com'
+                );
+                
+                const removedCount = initialCount - filteredUsers.length;
+                
+                // Enregistrer les utilisateurs filtrés dans le localStorage
+                localStorage.setItem('users', JSON.stringify(filteredUsers));
+                
+                // Vérifier si le chef avec l'email chef@aya.com existe toujours
+                const chefExists = filteredUsers.some(user => user.email === 'chef@aya.com');
+                
+                let message = `Nettoyage terminé. ${removedCount} compte(s) chef ont été supprimés.<br>`;
+                message += `Nombre d'utilisateurs avant: ${initialCount}<br>`;
+                message += `Nombre d'utilisateurs après: ${filteredUsers.length}<br>`;
+                message += `Le chef avec l'email chef@aya.com existe: ${chefExists ? 'Oui' : 'Non'}`;
+                
+                showResult(true, message);
+                
+                // Mettre à jour la liste des utilisateurs
+                document.getElementById('showUsers').click();
+            } catch (error) {
+                showResult(false, 'Erreur lors du nettoyage des comptes chef: ' + error.message);
+            }
+        });
+        
+        function showResult(success, message) {
+            const resultContainer = document.getElementById('resultContainer');
+            const resultMessage = document.getElementById('resultMessage');
+            
+            resultContainer.className = success ? 'result success' : 'result error';
+            resultMessage.innerHTML = message;
+            resultContainer.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

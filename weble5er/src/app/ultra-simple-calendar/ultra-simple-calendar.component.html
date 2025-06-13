@@ -1,0 +1,127 @@
+<div style="padding: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1>PLANNING DES CONGES</h1>
+    <div style="font-size: 1.2em; font-weight: bold;">
+      {{ currentDate | date:'dd MMM. yyyy' }}
+    </div>
+  </div>
+  
+  <!-- Navigation et filtres -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div>
+      <button (click)="previousPeriod()" style="padding: 8px 15px; background-color: #3f51b5; color: white; border: none; border-radius: 4px; margin-right: 10px;">
+        &laquo; Période précédente
+      </button>
+      <button (click)="nextPeriod()" style="padding: 8px 15px; background-color: #3f51b5; color: white; border: none; border-radius: 4px;">
+        Période suivante &raquo;
+      </button>
+    </div>
+    
+    <div>
+      <button routerLink="/home" style="padding: 8px 15px; background-color: #3f51b5; color: white; border: none; border-radius: 4px;">
+        Retour au tableau de bord
+      </button>
+    </div>
+  </div>
+  
+  <!-- Filtres -->
+  <div style="margin-bottom: 20px; background-color: #f5f5f5; padding: 15px; border-radius: 8px;">
+    <h3 style="margin-top: 0; margin-bottom: 10px;">Filtres</h3>
+    <div style="display: flex; gap: 20px;">
+      <div>
+        <label style="margin-right: 15px;">
+          <input type="checkbox" [(ngModel)]="showLeaveRequests" (change)="updateFilters()">
+          Afficher les congés
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" [(ngModel)]="showTrainingRequests" (change)="updateFilters()">
+          Afficher les formations
+        </label>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Calendrier par employé -->
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; min-width: 800px;">
+      <!-- En-tête avec les semaines -->
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+          <th style="padding: 10px; border: 1px solid #ddd; width: 150px; text-align: left;">SALARIES</th>
+          
+          <!-- En-tête pour chaque semaine -->
+          <ng-container *ngFor="let week of weeks; let weekIndex = index">
+            <th [attr.colspan]="7" style="padding: 10px; border: 1px solid #ddd; background-color: #ff9800; color: white;">
+              {{ week.startDate | date:'dd' }} - {{ week.endDate | date:'dd MMM. yyyy' }}
+            </th>
+          </ng-container>
+        </tr>
+        
+        <!-- Jours de la semaine -->
+        <tr>
+          <th style="padding: 10px; border: 1px solid #ddd; text-align: left;"></th>
+          
+          <!-- Jours pour chaque semaine -->
+          <ng-container *ngFor="let week of weeks">
+            <ng-container *ngFor="let day of week.days">
+              <th style="padding: 5px; border: 1px solid #ddd; width: 30px; text-align: center;"
+                  [ngStyle]="{'background-color': day.isWeekend ? '#f9f9f9' : '#fff'}">
+                <div style="font-weight: normal; font-size: 0.8em;">
+                  {{ ['L', 'M', 'M', 'J', 'V', 'S', 'D'][day.dayOfWeek] }}
+                </div>
+                <div [ngStyle]="{'background-color': day.isToday ? '#ffeb3b' : 'transparent', 'border-radius': '50%', 'width': '25px', 'height': '25px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', 'margin': '0 auto'}">
+                  {{ day.dayOfMonth }}
+                </div>
+              </th>
+            </ng-container>
+          </ng-container>
+        </tr>
+      </thead>
+      
+      <!-- Corps du tableau avec les employés -->
+      <tbody>
+        <tr *ngFor="let employee of employees">
+          <!-- Nom de l'employé -->
+          <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; text-align: left;">
+            {{ employee.firstName }}
+          </td>
+          
+          <!-- Cellules pour chaque jour et chaque semaine -->
+          <ng-container *ngFor="let week of weeks">
+            <ng-container *ngFor="let day of week.days">
+              <td style="padding: 5px; border: 1px solid #ddd; text-align: center; height: 40px;"
+                  [ngStyle]="{'background-color': getCellColor(employee.id, day.date)}">
+                {{ getCellText(employee.id, day.date) }}
+              </td>
+            </ng-container>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Légende -->
+  <div style="margin-top: 30px;">
+    <h3>Légende</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
+      <div style="display: flex; align-items: center;">
+        <div style="width: 20px; height: 20px; background-color: #a8e6a8; margin-right: 5px;"></div>
+        <span>Congés</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <div style="width: 20px; height: 20px; background-color: #b3d9ff; margin-right: 5px;"></div>
+        <span>Formation</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <div style="width: 20px; height: 20px; background-color: #ffeb99; margin-right: 5px;"></div>
+        <span>En attente</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <div style="width: 20px; height: 20px; background-color: #ffb3b3; margin-right: 5px;"></div>
+        <span>Rejeté</span>
+      </div>
+    </div>
+  </div>
+</div>

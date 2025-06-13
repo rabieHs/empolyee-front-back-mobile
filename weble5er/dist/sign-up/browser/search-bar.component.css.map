@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["search-bar.component.ts"],
+  "sourcesContent": ["\n    :host {\n      display: block;\n      width: 100%;\n      max-width: 300px;\n    }\n    .search-input {\n      width: 100%;\n      padding: 8px 12px;\n      border: 2px solid #ddd;\n      border-radius: 6px;\n      font-size: 14px;\n      transition: all 0.3s ease;\n    }\n    .search-input:focus {\n      outline: none;\n      border-color: #007bff;\n      box-shadow: 0 0 0 3px rgba(0,123,255,.2);\n    }\n  "],
+  "mappings": ";AACI;AACE,WAAA;AACA,SAAA;AACA,aAAA;;AAEF,CAAA;AACE,SAAA;AACA,WAAA,IAAA;AACA,UAAA,IAAA,MAAA;AACA,iBAAA;AACA,aAAA;AACA,cAAA,IAAA,KAAA;;AAEF,CARA,YAQA;AACE,WAAA;AACA,gBAAA;AACA,cAAA,EAAA,EAAA,EAAA,IAAA,KAAA,CAAA,EAAA,GAAA,EAAA,GAAA,EAAA;;",
+  "names": []
+}

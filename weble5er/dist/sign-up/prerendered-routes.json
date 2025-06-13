@@ -1,0 +1,16 @@
+{
+  "routes": {
+    "/": {},
+    "/admin": {},
+    "/admin/calendar": {},
+    "/chef": {},
+    "/forgot-password": {},
+    "/home": {},
+    "/home/profile": {},
+    "/home/requests": {},
+    "/home/welcome": {},
+    "/login": {},
+    "/minimal": {},
+    "/register": {}
+  }
+}
