@@ -20,45 +20,54 @@
   <div class="calendar-container">
     <h1 class="calendar-main-title">Calendrier des Congés et Formations - Chef</h1>
 
-  <!-- Légende du calendrier -->
-  <div class="calendar-legend">
-    <div class="legend-container">
-      <div class="legend-item">
-        <span class="legend-color leave-annual"></span>
-        <span>Congé annuel</span>
+  <!-- Status Bar - Only Congé and Formation for Chef -->
+  <div class="status-bar">
+    <div class="status-section">
+      <h3 class="status-title">Types de demandes (Chef)</h3>
+      <div class="status-items">
+        <div class="status-item">
+          <span class="status-color conge"></span>
+          <span class="status-label">Congé</span>
+          <span class="status-count">{{getRequestCountByType('congé')}}</span>
+        </div>
+        <div class="status-item">
+          <span class="status-color formation"></span>
+          <span class="status-label">Formation</span>
+          <span class="status-count">{{getRequestCountByType('formation')}}</span>
+        </div>
       </div>
-      <div class="legend-item">
-        <span class="legend-color leave-sick"></span>
-        <span>Congé maladie</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-color leave-maternity"></span>
-        <span>Congé maternité</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-color leave-paternity"></span>
-        <span>Congé paternité</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-color training"></span>
-        <span>Formation</span>
-      </div>
-      <div class="legend-divider"></div>
-      <div class="legend-item">
-        <span class="legend-status approved"></span>
-        <span>Approuvée</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-status chef-approved"></span>
-        <span>Chef approuvé</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-status chef-rejected"></span>
-        <span>Chef rejeté</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-status pending"></span>
-        <span>En attente</span>
+    </div>
+
+    <div class="status-divider"></div>
+
+    <div class="status-section">
+      <h3 class="status-title">Statuts</h3>
+      <div class="status-items">
+        <div class="status-item">
+          <span class="status-indicator pending"></span>
+          <span class="status-label">En attente</span>
+          <span class="status-count">{{getRequestCountByStatus('en attente')}}</span>
+        </div>
+        <div class="status-item">
+          <span class="status-indicator approved"></span>
+          <span class="status-label">Approuvées</span>
+          <span class="status-count">{{getRequestCountByStatus('approuvée')}}</span>
+        </div>
+        <div class="status-item">
+          <span class="status-indicator rejected"></span>
+          <span class="status-label">Rejetées</span>
+          <span class="status-count">{{getRequestCountByStatus('rejetée')}}</span>
+        </div>
+        <div class="status-item">
+          <span class="status-indicator chef-approved"></span>
+          <span class="status-label">Chef approuvé</span>
+          <span class="status-count">{{getRequestCountByStatus('chef approuvé')}}</span>
+        </div>
+        <div class="status-item">
+          <span class="status-indicator chef-rejected"></span>
+          <span class="status-label">Chef rejeté</span>
+          <span class="status-count">{{getRequestCountByStatus('chef rejeté')}}</span>
+        </div>
       </div>
     </div>
   </div>

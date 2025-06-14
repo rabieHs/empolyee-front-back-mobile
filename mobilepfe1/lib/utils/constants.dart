@@ -1,7 +1,7 @@
 class Constants {
   // IMPORTANT: URL de base de l'API avec adresse IP du serveur (connecté à la base de données aya_db)
   static const String apiUrl =
-      'http://192.168.1.123:3002/api'; // Adresse IP de votre ordinateur
+      'http://192.168.1.125:3002/api'; // Adresse IP de votre ordinateur
   static const String wsUrl = 'ws://192.168.1.123:3002'; // WebSocket du serveur
 
   // BACKUP URLs en cas de problème avec l'adresse IP principale

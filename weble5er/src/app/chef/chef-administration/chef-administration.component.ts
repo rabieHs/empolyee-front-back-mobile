@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
 })
 export class ChefAdministrationComponent implements OnInit, OnDestroy {
   requests: Request[] = [];
-  
+
   // Calendar data
   weekDays: string[] = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
   months: string[] = [
@@ -25,12 +25,12 @@ export class ChefAdministrationComponent implements OnInit, OnDestroy {
   currentMonth: Date = new Date();
   calendarDays: number[] = [];
   requestsByDay: Map<number, Request[]> = new Map<number, Request[]>();
-  
+
   // Modal data
   selectedRequest: Request | null = null;
   showRequestDetails: boolean = false;
   chefResponse: string = '';
-  
+
   // Subscriptions
   private subscriptions: Subscription = new Subscription();
 
@@ -91,7 +91,7 @@ export class ChefAdministrationComponent implements OnInit, OnDestroy {
     this.requests.forEach(request => {
       // Try multiple date fields and formats
       let requestDate: Date | null = null;
-      
+
       if (request.createdAt) {
         requestDate = new Date(request.createdAt);
       } else if (request.start_date) {
@@ -99,7 +99,7 @@ export class ChefAdministrationComponent implements OnInit, OnDestroy {
       } else if (request.date) {
         requestDate = new Date(request.date);
       }
-      
+
       // Validate the date
       if (requestDate && !isNaN(requestDate.getTime())) {
         if (requestDate.getFullYear() === currentYear && requestDate.getMonth() === currentMonthIndex) {
@@ -197,5 +197,36 @@ export class ChefAdministrationComponent implements OnInit, OnDestroy {
   isRequestPending(request: Request): boolean {
     const status = request.status?.toLowerCase() || '';
     return status.includes('attente') || status === 'pending';
+  }
+
+  /**
+   * Get count of requests by type (only congé and formation for chef)
+   * @param type Request type to count
+   * @returns Number of requests of that type
+   */
+  getRequestCountByType(type: string): number {
+    return this.requests.filter(request => {
+      const requestType = (request.type || '').toLowerCase();
+      const searchType = type.toLowerCase();
+      // Chef only sees congé and formation requests
+      const isAllowedType = searchType === 'congé' || searchType === 'formation';
+      return isAllowedType && requestType.includes(searchType);
+    }).length;
+  }
+
+  /**
+   * Get count of requests by status
+   * @param status Request status to count
+   * @returns Number of requests with that status
+   */
+  getRequestCountByStatus(status: string): number {
+    return this.requests.filter(request => {
+      const requestType = (request.type || '').toLowerCase();
+      const requestStatus = (request.status || '').toLowerCase();
+      const searchStatus = status.toLowerCase();
+      // Chef only sees congé and formation requests
+      const isAllowedType = requestType.includes('congé') || requestType.includes('formation');
+      return isAllowedType && requestStatus.includes(searchStatus);
+    }).length;
   }
 }

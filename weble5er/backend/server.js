@@ -86,6 +86,10 @@ function initializeServer() {
     const usersRoutes = require('./routes/users');
     app.use('/api/users', usersRoutes);
 
+    // Routes des profils (protégées par authentification)
+    const profileRoutes = require('./routes/profile');
+    app.use('/api/profile', profileRoutes);
+
     // Routes des notifications (protégées par authentification)
     const notificationsRoutes = require('./routes/notifications');
     app.use('/api/notifications', auth, notificationsRoutes);

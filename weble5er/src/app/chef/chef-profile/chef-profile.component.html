@@ -14,35 +14,274 @@
     </div>
   </div>
 
+  <!-- Success/Error Messages -->
+  <div class="alert alert-success" *ngIf="saveSuccess">
+    <i class='bx bx-check-circle'></i>
+    Informations mises à jour avec succès!
+  </div>
+  <div class="alert alert-error" *ngIf="saveError">
+    <i class='bx bx-error-circle'></i>
+    Erreur lors de la mise à jour des informations.
+  </div>
+
   <!-- Profile Content -->
   <div class="profile-content">
-    <!-- Chef Information Section -->
-    <div class="section">
-      <h2>Informations personnelles</h2>
-      <div class="info-grid">
+    <!-- Personal Information Section -->
+    <div class="section" *ngIf="personalInfo">
+      <div class="section-header">
+        <h2>Informations personnelles</h2>
+        <button *ngIf="!editPersonalMode" class="btn-edit" (click)="toggleEditPersonalMode()" [disabled]="savingPersonal">
+          <i class='bx bx-edit' *ngIf="!savingPersonal"></i>
+          <i class='bx bx-loader-alt bx-spin' *ngIf="savingPersonal"></i>
+          Modifier
+        </button>
+      </div>
+      <!-- View Mode -->
+      <div class="info-grid" *ngIf="!editPersonalMode">
         <div class="info-item">
-          <label>Prénom:</label>
-          <span>{{currentUser?.firstname || 'Non renseigné'}}</span>
+          <label>CIN:</label>
+          <span>{{ personalInfo.cin || 'Non renseigné' }}</span>
         </div>
         <div class="info-item">
-          <label>Nom:</label>
-          <span>{{currentUser?.lastname || 'Non renseigné'}}</span>
+          <label>Date de naissance:</label>
+          <span>{{ formatDateForDisplay(personalInfo.date_of_birth) || 'Non renseigné' }}</span>
         </div>
         <div class="info-item">
-          <label>Email:</label>
-          <span>{{currentUser?.email || 'Non renseigné'}}</span>
+          <label>Lieu de naissance:</label>
+          <span>{{ personalInfo.place_of_birth || 'Non renseigné' }}</span>
         </div>
         <div class="info-item">
-          <label>Rôle:</label>
-          <span class="role-badge chef-role">Chef d'équipe</span>
+          <label>Nationalité:</label>
+          <span>{{ personalInfo.nationality || 'Non renseigné' }}</span>
         </div>
         <div class="info-item">
-          <label>Date d'inscription:</label>
-          <span>{{(currentUser?.createdAt | date:'dd/MM/yyyy') || 'Non renseigné'}}</span>
+          <label>Situation familiale:</label>
+          <span>{{ getMaritalStatusLabel(personalInfo.marital_status) || 'Non renseigné' }}</span>
         </div>
         <div class="info-item">
-          <label>Statut:</label>
-          <span class="status-active">Actif</span>
+          <label>Nombre d'enfants:</label>
+          <span>{{ personalInfo.number_of_children || 0 }}</span>
+        </div>
+        <div class="info-item">
+          <label>Adresse:</label>
+          <span>{{ personalInfo.address || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Ville:</label>
+          <span>{{ personalInfo.city || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Pays:</label>
+          <span>{{ personalInfo.country || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Téléphone:</label>
+          <span>{{ personalInfo.phone || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Contact d'urgence:</label>
+          <span>{{ personalInfo.emergency_contact_name || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Relation:</label>
+          <span>{{ personalInfo.emergency_contact_relationship || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Téléphone d'urgence:</label>
+          <span>{{ personalInfo.emergency_contact_phone || 'Non renseigné' }}</span>
+        </div>
+      </div>
+
+      <!-- Edit Mode -->
+      <div class="edit-form" *ngIf="editPersonalMode">
+        <div class="form-grid">
+          <div class="form-item">
+            <label>CIN</label>
+            <input type="text" [(ngModel)]="personalInfo.cin">
+          </div>
+          <div class="form-item">
+            <label>Date de naissance</label>
+            <input type="date" [(ngModel)]="personalInfo.date_of_birth">
+          </div>
+          <div class="form-item">
+            <label>Lieu de naissance</label>
+            <input type="text" [(ngModel)]="personalInfo.place_of_birth">
+          </div>
+          <div class="form-item">
+            <label>Nationalité</label>
+            <input type="text" [(ngModel)]="personalInfo.nationality">
+          </div>
+          <div class="form-item">
+            <label>Situation familiale</label>
+            <select [(ngModel)]="personalInfo.marital_status">
+              <option value="single">Célibataire</option>
+              <option value="married">Marié(e)</option>
+              <option value="divorced">Divorcé(e)</option>
+              <option value="widowed">Veuf/Veuve</option>
+            </select>
+          </div>
+          <div class="form-item">
+            <label>Nombre d'enfants</label>
+            <input type="number" [(ngModel)]="personalInfo.number_of_children" min="0">
+          </div>
+          <div class="form-item">
+            <label>Adresse</label>
+            <input type="text" [(ngModel)]="personalInfo.address">
+          </div>
+          <div class="form-item">
+            <label>Ville</label>
+            <input type="text" [(ngModel)]="personalInfo.city">
+          </div>
+          <div class="form-item">
+            <label>Pays</label>
+            <input type="text" [(ngModel)]="personalInfo.country">
+          </div>
+          <div class="form-item">
+            <label>Téléphone</label>
+            <input type="tel" [(ngModel)]="personalInfo.phone">
+          </div>
+          <div class="form-item">
+            <label>Contact d'urgence</label>
+            <input type="text" [(ngModel)]="personalInfo.emergency_contact_name">
+          </div>
+          <div class="form-item">
+            <label>Relation</label>
+            <input type="text" [(ngModel)]="personalInfo.emergency_contact_relationship">
+          </div>
+          <div class="form-item">
+            <label>Téléphone d'urgence</label>
+            <input type="tel" [(ngModel)]="personalInfo.emergency_contact_phone">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-cancel" (click)="cancelPersonalEdit()" [disabled]="savingPersonal">Annuler</button>
+          <button class="btn-save" (click)="savePersonalInfo()" [disabled]="savingPersonal">
+            <i class='bx bx-loader-alt bx-spin' *ngIf="savingPersonal"></i>
+            {{ savingPersonal ? 'Enregistrement...' : 'Enregistrer' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Professional Information Section -->
+    <div class="section" *ngIf="professionalInfo">
+      <div class="section-header">
+        <h2>Informations professionnelles</h2>
+        <button *ngIf="!editProfessionalMode" class="btn-edit" (click)="toggleEditProfessionalMode()" [disabled]="savingProfessional">
+          <i class='bx bx-edit' *ngIf="!savingProfessional"></i>
+          <i class='bx bx-loader-alt bx-spin' *ngIf="savingProfessional"></i>
+          Modifier
+        </button>
+      </div>
+      <!-- View Mode -->
+      <div class="info-grid" *ngIf="!editProfessionalMode">
+        <div class="info-item">
+          <label>ID Employé:</label>
+          <span>{{ professionalInfo.employee_id || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Département:</label>
+          <span>{{ professionalInfo.department || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Poste:</label>
+          <span>{{ professionalInfo.position || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Grade:</label>
+          <span>{{ professionalInfo.grade || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Date d'embauche:</label>
+          <span>{{ formatDateForDisplay(professionalInfo.hire_date) || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Type de contrat:</label>
+          <span>{{ getContractTypeLabel(professionalInfo.contract_type) || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Salaire:</label>
+          <span>{{ professionalInfo.salary ? (professionalInfo.salary + ' DH') : 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>RIB:</label>
+          <span>{{ professionalInfo.rib || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Banque:</label>
+          <span>{{ professionalInfo.bank_name || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>CNSS:</label>
+          <span>{{ professionalInfo.cnss || 'Non renseigné' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Mutuelle:</label>
+          <span>{{ professionalInfo.mutuelle || 'Non renseigné' }}</span>
+        </div>
+      </div>
+
+      <!-- Edit Mode -->
+      <div class="edit-form" *ngIf="editProfessionalMode">
+        <div class="form-grid">
+          <div class="form-item">
+            <label>ID Employé</label>
+            <input type="text" [(ngModel)]="professionalInfo.employee_id">
+          </div>
+          <div class="form-item">
+            <label>Département</label>
+            <input type="text" [(ngModel)]="professionalInfo.department">
+          </div>
+          <div class="form-item">
+            <label>Poste</label>
+            <input type="text" [(ngModel)]="professionalInfo.position">
+          </div>
+          <div class="form-item">
+            <label>Grade</label>
+            <input type="text" [(ngModel)]="professionalInfo.grade">
+          </div>
+          <div class="form-item">
+            <label>Date d'embauche</label>
+            <input type="date" [(ngModel)]="professionalInfo.hire_date">
+          </div>
+          <div class="form-item">
+            <label>Type de contrat</label>
+            <select [(ngModel)]="professionalInfo.contract_type">
+              <option value="CDI">CDI</option>
+              <option value="CDD">CDD</option>
+              <option value="Stage">Stage</option>
+              <option value="Freelance">Freelance</option>
+            </select>
+          </div>
+          <div class="form-item">
+            <label>Salaire (DH)</label>
+            <input type="number" [(ngModel)]="professionalInfo.salary" min="0">
+          </div>
+          <div class="form-item">
+            <label>RIB</label>
+            <input type="text" [(ngModel)]="professionalInfo.rib">
+          </div>
+          <div class="form-item">
+            <label>Banque</label>
+            <input type="text" [(ngModel)]="professionalInfo.bank_name">
+          </div>
+          <div class="form-item">
+            <label>CNSS</label>
+            <input type="text" [(ngModel)]="professionalInfo.cnss">
+          </div>
+          <div class="form-item">
+            <label>Mutuelle</label>
+            <input type="text" [(ngModel)]="professionalInfo.mutuelle">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-cancel" (click)="cancelProfessionalEdit()" [disabled]="savingProfessional">Annuler</button>
+          <button class="btn-save" (click)="saveProfessionalInfo()" [disabled]="savingProfessional">
+            <i class='bx bx-loader-alt bx-spin' *ngIf="savingProfessional"></i>
+            {{ savingProfessional ? 'Enregistrement...' : 'Enregistrer' }}
+          </button>
         </div>
       </div>
     </div>

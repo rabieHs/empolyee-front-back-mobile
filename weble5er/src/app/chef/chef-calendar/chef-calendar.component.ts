@@ -396,6 +396,32 @@ export class ChefCalendarComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Get count of requests by type (only congé and formation for chef)
+   * @param type Request type to count
+   * @returns Number of requests of that type
+   */
+  getRequestCountByType(type: string): number {
+    return this.filteredRequests.filter(request => {
+      const requestType = (request.type || '').toLowerCase();
+      const searchType = type.toLowerCase();
+      return requestType.includes(searchType);
+    }).length;
+  }
+
+  /**
+   * Get count of requests by status
+   * @param status Request status to count
+   * @returns Number of requests with that status
+   */
+  getRequestCountByStatus(status: string): number {
+    return this.filteredRequests.filter(request => {
+      const requestStatus = (request.status || '').toLowerCase();
+      const searchStatus = status.toLowerCase();
+      return requestStatus.includes(searchStatus);
+    }).length;
+  }
+
+  /**
    * Retourne la classe CSS en fonction du statut de la demande
    * @param status Le statut de la demande
    * @returns La classe CSS correspondante

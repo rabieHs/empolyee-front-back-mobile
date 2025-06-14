@@ -6,7 +6,7 @@
       <app-search-bar (search)="onSearch($event)"></app-search-bar>
     </div>
     <div class="users-grid">
-      <div class="user-card" *ngFor="let registeredUser of filteredUsers" 
+      <div class="user-card" *ngFor="let registeredUser of filteredUsers"
            [class.selected]="selectedUser && selectedUser.id === registeredUser.id"
            (click)="selectUser(registeredUser)">
         <img [src]="registeredUser.profileImage || 'assets/default-profile.png'" alt="Profile" class="user-avatar">
@@ -57,129 +57,138 @@
     </div>
 
     <!-- Professional Information -->
-    <div class="info-section">
+    <div class="info-section" *ngIf="professionalInfo">
       <div class="section-header">
         <h3>Informations professionnelles</h3>
-        <button *ngIf="canEdit()" class="btn-edit" (click)="toggleEditMode()">
-          <i class='bx bx-edit'></i>
-          {{ editMode ? 'Annuler' : 'Modifier' }}
+        <button *ngIf="canEdit()" class="btn-edit" (click)="toggleEditProfessionalMode()" [disabled]="savingProfessional">
+          <i class='bx bx-edit' *ngIf="!savingProfessional"></i>
+          <i class='bx bx-loader-alt bx-spin' *ngIf="savingProfessional"></i>
+          {{ editProfessionalMode ? 'Annuler' : 'Modifier' }}
         </button>
-        <!-- Le chef ne peut pas éditer -->
       </div>
 
-      <div class="info-content" [class.edit-mode]="editMode">
+      <div class="info-content" [class.edit-mode]="editProfessionalMode">
         <div class="info-grid">
           <div class="info-item">
             <label>ID Employé</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).professionalInfo.employeeId" [readonly]="!editMode">
+            <input type="text" [(ngModel)]="professionalInfo.employee_id" [readonly]="!editProfessionalMode">
           </div>
           <div class="info-item">
             <label>Département</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).professionalInfo.department" [readonly]="!editMode">
+            <input type="text" [(ngModel)]="professionalInfo.department" [readonly]="!editProfessionalMode">
           </div>
           <div class="info-item">
             <label>Poste</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).professionalInfo.position" [readonly]="!editMode">
+            <input type="text" [(ngModel)]="professionalInfo.position" [readonly]="!editProfessionalMode">
           </div>
           <div class="info-item">
             <label>Grade</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).professionalInfo.grade" [readonly]="!editMode">
+            <input type="text" [(ngModel)]="professionalInfo.grade" [readonly]="!editProfessionalMode">
           </div>
           <div class="info-item">
-            <label>Date d'entrée</label>
-            <input type="date" [(ngModel)]="(selectedUser || user).professionalInfo.joinDate" [readonly]="!editMode">
+            <label>Date d'embauche</label>
+            <input type="date" [(ngModel)]="professionalInfo.hire_date" [readonly]="!editProfessionalMode">
           </div>
           <div class="info-item">
             <label>Type de contrat</label>
-            <select *ngIf="editMode" [(ngModel)]="(selectedUser || user).professionalInfo.contractType">
-              <option *ngFor="let option of contractTypeOptions" [value]="option.value">
-                {{ option.label }}
-              </option>
+            <select *ngIf="editProfessionalMode" [(ngModel)]="professionalInfo.contract_type">
+              <option value="CDI">CDI</option>
+              <option value="CDD">CDD</option>
+              <option value="Stage">Stage</option>
+              <option value="Freelance">Freelance</option>
             </select>
-            <input *ngIf="!editMode" type="text" [value]="(selectedUser || user).professionalInfo.contractType" readonly>
+            <input *ngIf="!editProfessionalMode" type="text" [value]="professionalInfo.contract_type" readonly>
+          </div>
+          <div class="info-item">
+            <label>Salaire</label>
+            <input type="number" [(ngModel)]="professionalInfo.salary" [readonly]="!editProfessionalMode">
           </div>
           <div class="info-item">
             <label>RIB</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).professionalInfo.rib" [readonly]="!editMode">
+            <input type="text" [(ngModel)]="professionalInfo.rib" [readonly]="!editProfessionalMode">
           </div>
           <div class="info-item">
             <label>Banque</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).professionalInfo.bankName" [readonly]="!editMode">
+            <input type="text" [(ngModel)]="professionalInfo.bank_name" [readonly]="!editProfessionalMode">
           </div>
           <div class="info-item">
             <label>CNSS</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).professionalInfo.cnss" [readonly]="!editMode">
+            <input type="text" [(ngModel)]="professionalInfo.cnss" [readonly]="!editProfessionalMode">
           </div>
           <div class="info-item">
             <label>Mutuelle</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).professionalInfo.mutuelle" [readonly]="!editMode">
+            <input type="text" [(ngModel)]="professionalInfo.mutuelle" [readonly]="!editProfessionalMode">
           </div>
         </div>
 
-        <div class="actions" *ngIf="editMode">
-          <button class="btn-cancel" (click)="cancelEdit()">Annuler</button>
-          <button class="btn-save" (click)="saveProfile()">Enregistrer</button>
+        <div class="actions" *ngIf="editProfessionalMode">
+          <button class="btn-cancel" (click)="cancelProfessionalEdit()" [disabled]="savingProfessional">Annuler</button>
+          <button class="btn-save" (click)="saveProfessionalInfo()" [disabled]="savingProfessional">
+            <i class='bx bx-loader-alt bx-spin' *ngIf="savingProfessional"></i>
+            {{ savingProfessional ? 'Enregistrement...' : 'Enregistrer' }}
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Personal Information -->
-    <div class="info-section">
+    <div class="info-section" *ngIf="personalInfo">
       <div class="section-header">
         <h3>Informations personnelles</h3>
-        <button *ngIf="canEdit()" class="btn-edit" (click)="toggleEditPersonalMode()">
-          <i class='bx bx-edit'></i>
+        <button *ngIf="canEdit()" class="btn-edit" (click)="toggleEditPersonalMode()" [disabled]="savingPersonal">
+          <i class='bx bx-edit' *ngIf="!savingPersonal"></i>
+          <i class='bx bx-loader-alt bx-spin' *ngIf="savingPersonal"></i>
           {{ editPersonalMode ? 'Annuler' : 'Modifier' }}
         </button>
-        <!-- Le chef ne peut pas éditer -->
       </div>
 
       <div class="info-content" [class.edit-mode]="editPersonalMode">
         <div class="info-grid">
           <div class="info-item">
             <label>CIN</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).personalInfo.cin" [readonly]="!editPersonalMode">
+            <input type="text" [(ngModel)]="personalInfo.cin" [readonly]="!editPersonalMode">
           </div>
           <div class="info-item">
             <label>Date de naissance</label>
-            <input type="date" [(ngModel)]="(selectedUser || user).personalInfo.dateOfBirth" [readonly]="!editPersonalMode">
+            <input type="date" [(ngModel)]="personalInfo.date_of_birth" [readonly]="!editPersonalMode">
           </div>
           <div class="info-item">
             <label>Lieu de naissance</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).personalInfo.placeOfBirth" [readonly]="!editPersonalMode">
+            <input type="text" [(ngModel)]="personalInfo.place_of_birth" [readonly]="!editPersonalMode">
           </div>
           <div class="info-item">
             <label>Nationalité</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).personalInfo.nationality" [readonly]="!editPersonalMode">
+            <input type="text" [(ngModel)]="personalInfo.nationality" [readonly]="!editPersonalMode">
           </div>
           <div class="info-item">
             <label>Situation familiale</label>
-            <select *ngIf="editPersonalMode" [(ngModel)]="(selectedUser || user).personalInfo.maritalStatus">
-              <option *ngFor="let option of maritalStatusOptions" [value]="option.value">
-                {{ option.label }}
-              </option>
+            <select *ngIf="editPersonalMode" [(ngModel)]="personalInfo.marital_status">
+              <option value="single">Célibataire</option>
+              <option value="married">Marié(e)</option>
+              <option value="divorced">Divorcé(e)</option>
+              <option value="widowed">Veuf/Veuve</option>
             </select>
-            <input *ngIf="!editPersonalMode" type="text" [value]="(selectedUser || user).personalInfo.maritalStatus" readonly>
+            <input *ngIf="!editPersonalMode" type="text" [value]="getMaritalStatusLabel(personalInfo.marital_status)" readonly>
           </div>
           <div class="info-item">
             <label>Nombre d'enfants</label>
-            <input type="number" [(ngModel)]="(selectedUser || user).personalInfo.numberOfChildren" [readonly]="!editPersonalMode">
+            <input type="number" [(ngModel)]="personalInfo.number_of_children" [readonly]="!editPersonalMode">
           </div>
           <div class="info-item">
             <label>Adresse</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).personalInfo.address" [readonly]="!editPersonalMode">
+            <input type="text" [(ngModel)]="personalInfo.address" [readonly]="!editPersonalMode">
           </div>
           <div class="info-item">
             <label>Ville</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).personalInfo.city" [readonly]="!editPersonalMode">
+            <input type="text" [(ngModel)]="personalInfo.city" [readonly]="!editPersonalMode">
           </div>
           <div class="info-item">
             <label>Pays</label>
-            <input type="text" [(ngModel)]="(selectedUser || user).personalInfo.country" [readonly]="!editPersonalMode">
+            <input type="text" [(ngModel)]="personalInfo.country" [readonly]="!editPersonalMode">
           </div>
           <div class="info-item">
             <label>Téléphone</label>
-            <input type="tel" [(ngModel)]="(selectedUser || user).personalInfo.phoneNumber" [readonly]="!editPersonalMode">
+            <input type="tel" [(ngModel)]="personalInfo.phone" [readonly]="!editPersonalMode">
           </div>
         </div>
 
@@ -189,22 +198,25 @@
           <div class="info-grid">
             <div class="info-item">
               <label>Nom</label>
-              <input type="text" [(ngModel)]="(selectedUser || user).personalInfo.emergencyContact.name" [readonly]="!editPersonalMode">
+              <input type="text" [(ngModel)]="personalInfo.emergency_contact_name" [readonly]="!editPersonalMode">
             </div>
             <div class="info-item">
               <label>Relation</label>
-              <input type="text" [(ngModel)]="(selectedUser || user).personalInfo.emergencyContact.relationship" [readonly]="!editPersonalMode">
+              <input type="text" [(ngModel)]="personalInfo.emergency_contact_relationship" [readonly]="!editPersonalMode">
             </div>
             <div class="info-item">
               <label>Téléphone</label>
-              <input type="tel" [(ngModel)]="(selectedUser || user).personalInfo.emergencyContact.phoneNumber" [readonly]="!editPersonalMode">
+              <input type="tel" [(ngModel)]="personalInfo.emergency_contact_phone" [readonly]="!editPersonalMode">
             </div>
           </div>
         </div>
 
         <div class="actions" *ngIf="editPersonalMode">
-          <button class="btn-cancel" (click)="cancelPersonalEdit()">Annuler</button>
-          <button class="btn-save" (click)="savePersonalInfo()">Enregistrer</button>
+          <button class="btn-cancel" (click)="cancelPersonalEdit()" [disabled]="savingPersonal">Annuler</button>
+          <button class="btn-save" (click)="savePersonalInfo()" [disabled]="savingPersonal">
+            <i class='bx bx-loader-alt bx-spin' *ngIf="savingPersonal"></i>
+            {{ savingPersonal ? 'Enregistrement...' : 'Enregistrer' }}
+          </button>
         </div>
       </div>
     </div>

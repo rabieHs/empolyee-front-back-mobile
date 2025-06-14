@@ -2,6 +2,79 @@
 <div class="calendar-container">
   <div class="calendar-header">
     <h1>Administration - Calendrier des demandes</h1>
+
+    <!-- Status Bar - All Request Types for Admin -->
+    <div class="status-bar">
+      <div class="status-section">
+        <h3 class="status-title">Types de demandes</h3>
+        <div class="status-items">
+          <div class="status-item">
+            <span class="status-color conge"></span>
+            <span class="status-label">Congé</span>
+            <span class="status-count">{{getRequestCountByType('congé')}}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-color formation"></span>
+            <span class="status-label">Formation</span>
+            <span class="status-count">{{getRequestCountByType('formation')}}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-color avance"></span>
+            <span class="status-label">Avance</span>
+            <span class="status-count">{{getRequestCountByType('avance')}}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-color pret"></span>
+            <span class="status-label">Prêt</span>
+            <span class="status-count">{{getRequestCountByType('prêt')}}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-color document"></span>
+            <span class="status-label">Document</span>
+            <span class="status-count">{{getRequestCountByType('document')}}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-color attestation"></span>
+            <span class="status-label">Attestation</span>
+            <span class="status-count">{{getRequestCountByType('attestation')}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-divider"></div>
+
+      <div class="status-section">
+        <h3 class="status-title">Statuts</h3>
+        <div class="status-items">
+          <div class="status-item">
+            <span class="status-indicator pending"></span>
+            <span class="status-label">En attente</span>
+            <span class="status-count">{{getRequestCountByStatus('en attente')}}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-indicator approved"></span>
+            <span class="status-label">Approuvées</span>
+            <span class="status-count">{{getRequestCountByStatus('approuvée')}}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-indicator rejected"></span>
+            <span class="status-label">Rejetées</span>
+            <span class="status-count">{{getRequestCountByStatus('rejetée')}}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-indicator chef-approved"></span>
+            <span class="status-label">Chef approuvé</span>
+            <span class="status-count">{{getRequestCountByStatus('chef approuvé')}}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-indicator chef-rejected"></span>
+            <span class="status-label">Chef rejeté</span>
+            <span class="status-count">{{getRequestCountByStatus('chef rejeté')}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="calendar-navigation">
       <button class="btn btn-outline-primary" (click)="changeMonth(-1)">
         <i class="fas fa-chevron-left"></i> Mois précédent

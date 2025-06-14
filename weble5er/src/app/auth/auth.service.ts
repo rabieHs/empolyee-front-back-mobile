@@ -122,9 +122,24 @@ export class AuthService {
   // Get authentication token
   getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem(this.TOKEN_KEY);
+      const token = localStorage.getItem(this.TOKEN_KEY);
+      if (token && this.isTokenExpired(token)) {
+        this.logout();
+        return null;
+      }
+      return token;
     }
     return null;
+  }
+
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      return payload.exp < currentTime;
+    } catch {
+      return true; // If we can't decode the token, consider it expired
+    }
   }
 
   // Get authentication headers
